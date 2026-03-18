@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo - Desafio Portugol</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <section class="tela ativa">
+            <div id="timer" class="timer-display">00:00.000</div>
+            <div class="pergunta-box">
+                <strong id="num-questao">Questão 1</strong><br>
+                <span id="texto-pergunta">Carregando...</span>
+            </div>
+            <div id="container-alternativas"></div>
+            <button id="btn-proxima" class="btn btn-blue" style="display:none; margin-top:20px; width: 100%;" onclick="proxima()">Próxima Pergunta</button>
+        </section>
+    </div>
+
+    <script>
+        const banco = [
+            { q: "Qual comando mostra algo na tela?", a: ["leia()", "escreva()", "programa", "inicio"], c: "escreva()" },
+            { q: "Para guardar um nome usamos o tipo:", a: ["inteiro", "real", "cadeia", "logico"], c: "cadeia" },
+            { q: "Como se inicia um comentário de uma linha?", a: ["//", "/*", "#", "--"], c: "//" },
+            { q: "Qual o símbolo para atribuir valor (receber)?", a: ["==", "=", "<-", "+"], c: "<-" },
+            { q: "Qual tipo usamos para números com vírgula?", a: ["inteiro", "real", "caracter", "vazio"], c: "real" },
+            { q: "O comando 'se' serve para:", a: ["Repetir", "Finalizar", "Decisão/Condição", "Ler dados"], c: "Decisão/Condição" },
+            { q: "Qual o resultado de 10 % 3 (resto)?", a: ["3", "1", "0", "10"], c: "1" },
+            { q: "Como lemos algo do teclado?", a: ["escreva()", "leia()", "teclado()", "pegar()"], c: "leia()" },
+            { q: "Um valor Verdadeiro ou Falso é do tipo:", a: ["inteiro", "cadeia", "caracter", "logico"], c: "logico" },
+            { q: "Qual laço de repetição usamos com contador?", a: ["se", "escolha", "para", "pare"], c: "para" }
+        ];
+
+        let perguntas = banco.sort(() => Math.random() - 0.5).slice(0, 5);
+        let indice = 0, acertos = 0, inicio = Date.now();
+
+        function mostrar() {
+            const p = perguntas[indice];
+            document.getElementById('num-questao').innerText = `Questão ${indice + 1} de 5`;
+            document.getElementById('texto-pergunta').innerText = p.q;
+            const container = document.getElementById('container-alternativas');
+            container.innerHTML = '';
+            
+            [...p.a].sort(() => Math.random() - 0.5).forEach(txt => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-alt';
+                btn.innerText = txt;
+                btn.onclick = () => validar(txt, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function validar(escolha, btnClicado) {
+            const correta = perguntas[indice].c;
+            const todosOsBotoes = document.querySelectorAll('.btn-alt');
+            
+            // Trava todos os botões para não clicar duas vezes
+            todosOsBotoes.forEach(b => b.disabled = true);
+
+            if (escolha === correta) {
+                btnClicado.classList.add('correta'); // Fica verde
+                acertos++;
+            } else {
+                btnClicado.classList.add('errada'); // O clicado fica vermelho
+                // Percorre os botões para achar o texto correto e pintar de verde
+                todosOsBotoes.forEach(b => {
+                    if (b.innerText === correta) {
+                        b.classList.add('correta');
+                    }
+                });
+            }
+            document.getElementById('btn-proxima').style.display = 'block';
+        }
+
+        function proxima() {
+            indice++;
+            if(indice < 5) {
+                document.getElementById('btn-proxima').style.display = 'none';
+                mostrar();
+            } else {
+                finalizar();
+            }
+        }
+
+        function finalizar() {
+            const tempo = Date.now() - inicio;
+            const nome = localStorage.getItem('usuarioAtual');
+            let ranking = JSON.parse(localStorage.getItem('rankingPortugol5Q') || "[]");
+            
+            // Sobrescreve: remove o antigo antes de salvar o novo
+            ranking = ranking.filter(i => i.nome.toLowerCase() !== nome.toLowerCase());
+            
+            ranking.push({ 
+                nome, 
+                acertos, 
+                tempo, 
+                tempoTexto: formatar(tempo) 
+            });
+            
+            localStorage.setItem('rankingPortugol5Q', JSON.stringify(ranking));
+            window.location.href = 'ranking.html';
+        }
+
+        function formatar(ms) {
+            const m = Math.floor(ms/60000).toString().padStart(2,'0');
+            const s = Math.floor((ms%60000)/1000).toString().padStart(2,'0');
+            const mil = (ms%1000).toString().padStart(3,'0');
+            return `${m}:${s}.${mil}`;
+        }
+
+        setInterval(() => {
+            document.getElementById('timer').innerText = formatar(Date.now() - inicio);
+        }, 10);
+
+        mostrar();
+    </script>
+</body>
+</html>
