@@ -1,10 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo - Desafio Portugol</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
     <div class="container">
@@ -55,20 +56,15 @@
         function validar(escolha, btnClicado) {
             const correta = perguntas[indice].c;
             const todosOsBotoes = document.querySelectorAll('.btn-alt');
-            
-            // Trava todos os botões para não clicar duas vezes
             todosOsBotoes.forEach(b => b.disabled = true);
 
             if (escolha === correta) {
-                btnClicado.classList.add('correta'); // Fica verde
+                btnClicado.classList.add('correta');
                 acertos++;
             } else {
-                btnClicado.classList.add('errada'); // O clicado fica vermelho
-                // Percorre os botões para achar o texto correto e pintar de verde
+                btnClicado.classList.add('errada');
                 todosOsBotoes.forEach(b => {
-                    if (b.innerText === correta) {
-                        b.classList.add('correta');
-                    }
+                    if (b.innerText === correta) b.classList.add('correta');
                 });
             }
             document.getElementById('btn-proxima').style.display = 'block';
@@ -84,23 +80,28 @@
             }
         }
 
-        function finalizar() {
+        async function finalizar() {
             const tempo = Date.now() - inicio;
             const nome = localStorage.getItem('usuarioAtual');
-            let ranking = JSON.parse(localStorage.getItem('rankingPortugol5Q') || "[]");
             
-            // Sobrescreve: remove o antigo antes de salvar o novo
-            ranking = ranking.filter(i => i.nome.toLowerCase() !== nome.toLowerCase());
-            
-            ranking.push({ 
-                nome, 
-                acertos, 
-                tempo, 
-                tempoTexto: formatar(tempo) 
+            const dados = {
+                nome: nome,
+                acertos: acertos,
+                tempo: tempo,
+                tempoTexto: formatar(tempo)
+            };
+
+            // Envia o resultado para o servidor Django
+            await fetch("{% url 'salvar_resultado' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(dados)
             });
-            
-            localStorage.setItem('rankingPortugol5Q', JSON.stringify(ranking));
-            window.location.href = 'ranking.html';
+
+            window.location.href = "{% url 'ranking' %}";
         }
 
         function formatar(ms) {

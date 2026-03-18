@@ -1,17 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ranking - Desafio Portugol</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
     <style>
-        /* Estilo para destacar a sua posição quando fora do Top 5 */
-        .minha-posicao {
-            background-color: #e1f5fe;
-            font-weight: bold;
-            border-top: 2px solid #0984e3;
-        }
+        .minha-posicao { background-color: #e1f5fe; font-weight: bold; border-left: 5px solid #0984e3; }
     </style>
 </head>
 <body>
@@ -27,62 +23,34 @@
                         <th>Tempo</th>
                     </tr>
                 </thead>
-                <tbody id="corpo-ranking"></tbody>
+                <tbody id="corpo-ranking">
+                    </tbody>
             </table>
-            <button class="btn btn-blue" style="margin-top: 30px;" onclick="window.location.href='cadastro.html'">Voltar para o cadastro</button>
+            <button class="btn btn-blue" style="margin-top: 30px;" onclick="window.location.href='{% url 'cadastro' %}'">Novo Jogo</button>
         </section>
     </div>
 
     <script>
-        // 1. Recupera o ranking e o usuário que acabou de jogar
-        const ranking = JSON.parse(localStorage.getItem('rankingPortugol5Q') || "[]");
         const usuarioAtual = localStorage.getItem('usuarioAtual');
 
-        // 2. Ordena o ranking completo
-        ranking.sort((a, b) => b.acertos - a.acertos || a.tempo - b.tempo);
-        
-        const corpo = document.getElementById('corpo-ranking');
-        corpo.innerHTML = '';
-
-        // 3. Encontra a posição do usuário atual no ranking total
-        const indexUsuario = ranking.findIndex(item => item.nome === usuarioAtual);
-        const estaNoTop5 = indexUsuario >= 0 && indexUsuario < 5;
-
-        // 4. Renderiza o Top 5
-        ranking.slice(0, 10).forEach((item, i) => {
-            const tr = document.createElement('tr');
-            // Se o item do Top 5 for o usuário atual, destaca a linha
-            if (item.nome === usuarioAtual) tr.className = 'minha-posicao';
+        async function atualizarRanking() {
+            const response = await fetch("{% url 'api_ranking' %}");
+            const dados = await response.json();
+            const corpo = document.getElementById('corpo-ranking');
             
-            tr.innerHTML = `
-                <td>${i + 1}º</td>
-                <td>${item.nome}</td>
-                <td>${item.acertos}</td>
-                <td>${item.tempoTexto}</td>
-            `;
-            corpo.appendChild(tr);
-        });
-
-        // 5. Se o usuário NÃO estiver no Top 5, adiciona uma linha extra
-        if (!estaNoTop5 && indexUsuario !== -1) {
-            const dadosUsuario = ranking[indexUsuario];
-            
-            // Adiciona uma linha separadora visual (opcional)
-            const separador = document.createElement('tr');
-            separador.innerHTML = `<td colspan="4" style="padding: 5px; color: #ccc;">...</td>`;
-            corpo.appendChild(separador);
-
-            // Adiciona a linha da posição real
-            const trUser = document.createElement('tr');
-            trUser.className = 'minha-posicao';
-            trUser.innerHTML = `
-                <td>${indexUsuario + 1}º</td>
-                <td>${dadosUsuario.nome} (Você)</td>
-                <td>${dadosUsuario.acertos}</td>
-                <td>${dadosUsuario.tempoTexto}</td>
-            `;
-            corpo.appendChild(trUser);
+            corpo.innerHTML = dados.map((item, i) => `
+                <tr class="${item.nome === usuarioAtual ? 'minha-posicao' : ''}">
+                    <td>${i + 1}º</td>
+                    <td>${item.nome} ${item.nome === usuarioAtual ? '(Você)' : ''}</td>
+                    <td>${item.acertos}</td>
+                    <td>${item.tempo_texto}</td>
+                </tr>
+            `).join('');
         }
+
+        atualizarRanking();
+        // Atualização em tempo real a cada 3 segundos
+        setInterval(atualizarRanking, 3000);
     </script>
 </body>
 </html>

@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-8%az0xz71y#&*)^jdo!_6t16xyj!@_k-_mmt$ce04e2%t$+_qy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -119,4 +120,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+# Caminho base do projeto
+# BASE_DIR = Path(__file__).resolve().parent.parent
+
+# URL para acessar os arquivos (ex: /static/style.css)
+STATIC_URL = '/static/'
+
+# Local onde o Django vai procurar seus arquivos CSS/JS durante o desenvolvimento
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# Local onde o Django vai reunir todos os arquivos para o deploy (coleta)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

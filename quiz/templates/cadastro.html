@@ -1,10 +1,12 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Desafio Portugol</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
     <div class="container">
@@ -15,7 +17,7 @@
             <br>
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn btn-blue" onclick="irParaJogo()">Continuar</button>
-                <button class="btn btn-alt" style="text-align: center;" onclick="window.location.href='ranking.html'">Ver Ranking</button>
+                <button class="btn btn-alt" style="text-align: center;" onclick="window.location.href='{% url 'ranking' %}'">Ver Ranking</button>
             </div>
         </section>
     </div>
@@ -24,8 +26,9 @@
         function irParaJogo() {
             const nome = document.getElementById('input-nome').value.trim();
             if (!nome) return alert("Por favor, digite seu nome!");
+            // Guardamos no localStorage apenas para identificar o jogador durante a sessão
             localStorage.setItem('usuarioAtual', nome);
-            window.location.href = 'desafio.html';
+            window.location.href = "{% url 'desafio' %}";
         }
     </script>
 </body>

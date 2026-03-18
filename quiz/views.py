@@ -7,10 +7,10 @@ def cadastro(request):
     return render(request, 'cadastro.html')
 
 def desafio(request):
-    return render(request, 'quiz/desafio.html')
+    return render(request, 'desafio.html')
 
 def ranking_view(request):
-    return render(request, 'quiz/ranking.html')
+    return render(request, 'ranking.html')
 
 def api_ranking(request):
     # Retorna o Top 5 para a atualização em tempo real

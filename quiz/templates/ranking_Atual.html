@@ -1,16 +1,19 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ranking - Desafio Portugol</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+        .minha-posicao { background-color: #e1f5fe; font-weight: bold; border-left: 5px solid #0984e3; }
+    </style>
 </head>
 <body>
     <div class="container">
         <section class="tela ativa">
             <h1>🏆 Ranking Top 10</h1>
-            <p style="font-size: 0.8em; color: #a0aec0;">Atualizando em tempo real...</p>
             <table class="ranking-table">
                 <thead>
                     <tr>
@@ -20,46 +23,34 @@
                         <th>Tempo</th>
                     </tr>
                 </thead>
-                <tbody id="corpo-ranking"></tbody>
+                <tbody id="corpo-ranking">
+                    </tbody>
             </table>
-            <!-- <button class="btn btn-blue" style="margin-top: 30px;" onclick="window.location.href='cadastro.html'">Voltar para o cadastro</button> -->
+            <!-- <button class="btn btn-blue" style="margin-top: 30px;" onclick="window.location.href='{% url 'cadastro' %}'">Novo Jogo</button> -->
         </section>
     </div>
 
     <script>
-        function atualizarTabela() {
-            // 1. Busca os dados mais recentes do localStorage
-            const ranking = JSON.parse(localStorage.getItem('rankingPortugol5Q') || "[]");
+        const usuarioAtual = localStorage.getItem('usuarioAtual');
 
-            // 2. Ordena por acertos e depois por tempo
-            ranking.sort((a, b) => b.acertos - a.acertos || a.tempo - b.tempo);
-            
+        async function atualizarRanking() {
+            const response = await fetch("{% url 'api_ranking' %}");
+            const dados = await response.json();
             const corpo = document.getElementById('corpo-ranking');
             
-            // 3. Gera o novo HTML apenas se houver mudança ou para atualizar
-            let novoConteudo = '';
-            ranking.slice(0, 10).forEach((item, i) => {
-                novoConteudo += `<tr>
+            corpo.innerHTML = dados.map((item, i) => `
+                <tr class="${item.nome === usuarioAtual ? 'minha-posicao' : ''}">
                     <td>${i + 1}º</td>
-                    <td>${item.nome}</td>
+                    <td>${item.nome} ${item.nome === usuarioAtual ? '(Você)' : ''}</td>
                     <td>${item.acertos}</td>
-                    <td>${item.tempoTexto}</td>
-                </tr>`;
-            });
-
-            corpo.innerHTML = novoConteudo;
+                    <td>${item.tempo_texto}</td>
+                </tr>
+            `).join('');
         }
 
-        // Executa a função assim que a página abre
-        atualizarTabela();
-
-        // Define o intervalo para atualizar a cada 2000ms (2 segundos)
-        setInterval(atualizarTabela, 2000);
-
-        // Opcional: Escuta mudanças específicas no localStorage de outras abas
-        window.addEventListener('storage', () => {
-            atualizarTabela();
-        });
+        atualizarRanking();
+        // Atualização em tempo real a cada 3 segundos
+        setInterval(atualizarRanking, 3000);
     </script>
 </body>
 </html>
