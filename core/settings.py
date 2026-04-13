@@ -123,13 +123,17 @@ USE_TZ = True
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# --- CONFIGURAÇÃO DE ESTÁTICOS ---
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'quiz', 'static')]
 
-# Mude para esse storage específico
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# Forçamos o Django a olhar exatamente para o caminho do app
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'quiz', 'static'),
+]
 
-# ISSO É IMPORTANTE: Força o WhiteNoise a servir os arquivos
+# Use o storage mais simples para garantir que o arquivo não mude de nome (hash)
+STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
+
+# Ativação total do WhiteNoise
 WHITENOISE_USE_FINDERS = True
-WHITENOISE_MANIFEST_STRICT = False
