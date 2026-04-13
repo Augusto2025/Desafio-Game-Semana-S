@@ -1,0 +1,54 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container { width: 100%; max-width: 700px; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+
+.tela { text-align: center; }
+
+h1 { color: #2d3436; margin-bottom: 20px; }
+p { color: #636e72; margin-bottom: 20px; }
+
+input[type="text"] {
+    width: 100%; padding: 15px; border: 2px solid #dfe6e9;
+    border-radius: 10px; margin-bottom: 20px; font-size: 18px; outline: none;
+}
+
+.btn {
+    padding: 15px 30px; border: none; border-radius: 10px; font-weight: bold;
+    cursor: pointer; transition: 0.3s; font-size: 18px; color: white;
+}
+
+.btn-blue { background: #0984e3; }
+.btn-blue:hover { background: #076bbd; }
+
+.btn-alt { 
+    background: #f1f2f6; color: #2d3436; text-align: left; 
+    width: 100%; margin-bottom: 10px; border: 2px solid transparent;
+}
+.btn-alt:hover:not(:disabled) { border-color: #0984e3; background: #e1f5fe; }
+
+.correta { background: #00b894 !important; color: white; }
+.errada { background: #d63031 !important; color: white; }
+
+.timer-display {
+    font-size: 2em; font-family: monospace; color: #2d3436;
+    background: #dfe6e9; padding: 10px; border-radius: 10px; margin: 20px 0;
+}
+
+.ranking-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.ranking-table th, .ranking-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; }
+
+.pergunta-box { 
+    background: #f9f9f9; padding: 20px; border-radius: 10px; 
+    margin-bottom: 20px; font-size: 1.2em; border-left: 5px solid #0984e3; 
+    text-align: left; 
+}

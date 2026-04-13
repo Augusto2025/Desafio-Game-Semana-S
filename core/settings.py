@@ -126,7 +126,7 @@ STATIC_URL = '/static/'
 
 # Isso diz ao Django para procurar exatamente onde sua pasta está
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'quiz', 'static'),
+    os.path.join(BASE_DIR, 'static'),
 ]
 
 # Pasta de saída para o deploy
