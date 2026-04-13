@@ -133,7 +133,7 @@ STATIC_URL = '/static/'
 
 # Local onde o Django vai procurar seus arquivos CSS/JS durante o desenvolvimento
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'quiz', 'static'),
 ]
 
 # Local onde o Django vai reunir todos os arquivos para o deploy (coleta)
@@ -141,3 +141,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Faz o WhiteNoise servir os arquivos e compactá-los (ganha velocidade)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Isso garante que o Django procure a pasta static dentro de cada app (como o seu quiz)
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
