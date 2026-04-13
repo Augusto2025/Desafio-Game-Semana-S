@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    'django.midd    leware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -121,25 +121,17 @@ USE_I18N = True
 
 USE_TZ = True
 
-# --- CONFIGURAÇÃO DE ESTÁTICOS ---
+# 1. URL base
 STATIC_URL = '/static/'
 
-# Isso diz ao Django para procurar exatamente onde sua pasta está
+# 2. ONDE A VERCEL VAI BUSCAR (O pulo do gato)
+# Adicione 'quiz' no caminho para ele entrar na pasta correta
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'quiz', 'static'),
 ]
 
-# Pasta de saída para o deploy
+# 3. ONDE A VERCEL VAI GUARDAR (Para o WhiteNoise servir)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# MUDANÇA AQUI: Usar a versão simples sem "Manifest"
-# Ela é muito mais estável para deploys rápidos
+# 4. O MOTOR QUE ENTREGA O ARQUIVO
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-# Adicione essa linha para ajudar o WhiteNoise a achar os arquivos
-WHITENOISE_USE_FINDERS = True
-
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-]
