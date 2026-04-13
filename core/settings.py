@@ -138,3 +138,6 @@ STATICFILES_DIRS = [
 
 # Local onde o Django vai reunir todos os arquivos para o deploy (coleta)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Faz o WhiteNoise servir os arquivos e compactá-los (ganha velocidade)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
