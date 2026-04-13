@@ -121,18 +121,15 @@ USE_I18N = True
 
 USE_TZ = True
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 STATIC_URL = '/static/'
-
-# Local onde o ficheiro está agora (dentro do teu app quiz)
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'quiz', 'static'),
-]
-
-# Pasta onde a Vercel vai "reunir" tudo para servir
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'quiz', 'static')]
 
-# Usar esta versão do storage que é mais compatível
+# Mude para esse storage específico
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-# E garanta que essa linha exista logo abaixo:
-WHITENOISE_KEEP_FILES_ON_DISK = True
+# ISSO É IMPORTANTE: Força o WhiteNoise a servir os arquivos
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_MANIFEST_STRICT = False
