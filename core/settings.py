@@ -133,3 +133,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Usar esta versão do storage que é mais compatível
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+# E garanta que essa linha exista logo abaixo:
+WHITENOISE_KEEP_FILES_ON_DISK = True
