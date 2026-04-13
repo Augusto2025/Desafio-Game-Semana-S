@@ -121,27 +121,15 @@ USE_I18N = True
 
 USE_TZ = True
 
-# --- CONFIGURAÇÃO DE ESTÁTICOS ---
 STATIC_URL = '/static/'
 
-# Isso diz ao Django para procurar exatamente onde sua pasta está
+# Local onde o ficheiro está agora (dentro do teu app quiz)
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'quiz', 'static'),
 ]
 
-# Pasta de saída para o deploy
+# Pasta onde a Vercel vai "reunir" tudo para servir
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# MUDANÇA AQUI: Usar a versão simples sem "Manifest"
-# Ela é muito mais estável para deploys rápidos
+# Usar esta versão do storage que é mais compatível
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-# Adicione essa linha para ajudar o WhiteNoise a achar os arquivos
-WHITENOISE_USE_FINDERS = True
-
-WHITENOISE_KEEP_FILES_ON_DISK = True
-
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-]
