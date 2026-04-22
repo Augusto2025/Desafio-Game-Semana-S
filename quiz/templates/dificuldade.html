@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Escolha a Dificuldade</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      width: 150px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+
+    .facil {
+      border-top: 5px solid #4CAF50;
+    }
+
+    .medio {
+      border-top: 5px solid #FFC107;
+    }
+
+    .dificil {
+      border-top: 5px solid #F44336;
+    }
+
+    h2 {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="card facil" onclick="selecionar('Fácil')">
+      <h2>Fácil</h2>
+    
+    </div>
+
+    <div class="card medio" onclick="selecionar('Médio')">
+      <h2>Médio</h2>
+    </div>
+
+    <div class="card dificil" onclick="selecionar('Difícil')">
+      <h2>Difícil</h2>
+    </div>
+  </div>
+
+  <script>
+    function selecionar(nivel) {
+      alert("Você escolheu: " + nivel);
+    }
+  </script>
+
+</body>
+</html>
