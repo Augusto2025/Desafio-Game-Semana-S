@@ -31,8 +31,8 @@ def ranking_view(request):
     return render(request, 'ranking.html')
 
 def api_ranking(request):
-    top_5 = Ranking.objects.all()[:10]
-    data = list(top_5.values('nome', 'acertos', 'tempo_texto'))
+    top_10 = Ranking.objects.all()[:10]
+    data = list(top_10.values('nome', 'acertos', 'tempo_texto'))
     return JsonResponse(data, safe=False)
 
 def salvar_resultado(request):
