@@ -9,10 +9,7 @@ urlpatterns = [
     path('ranking/', views.ranking_view, name='ranking'),
     path('api/ranking/', views.api_ranking, name='api_ranking'),
     path('salvar-resultado/', views.salvar_resultado, name='salvar_resultado'),
-<<<<<<< HEAD
     path('dificuldade/', views.dificuldade, name='dificuldade'),
-=======
     path('desbloquear-cofre/', views.desbloquear_cofre, name='desbloquear_cofre'),
     path('premio/', views.api_premio, name='premio'),
->>>>>>> main
 ]
