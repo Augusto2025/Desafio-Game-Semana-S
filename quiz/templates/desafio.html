@@ -5,12 +5,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo - Desafio Portugol</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="{% static 'style/style.css' %}">
+    <style>
+        /* Painel fixo no canto inferior direito */
+        .card-k0da {
+            position: fixed;
+            bottom: 230px;
+            right: 20px;
+            background: #ffffff; /* Fundo Branco */
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 280px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .k0da-content p {
+            margin: 0 0 10px 0;
+            font-size: 0.85rem;
+            color: #0056b3; /* Texto Azul */
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Container dos quadrados dos dígitos */
+        .digitos-progress {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .slot-digito {
+            width: 45px;
+            height: 55px;
+            background: #f8f9fa; /* Cinza bem clarinho */
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #adb5bd; /* Cor apagada para o '?' */
+            transition: all 0.4s ease;
+        }
+
+        /* Classe para quando o dígito é revelado - Azul Vibrante */
+        .revelado {
+            background: #e7f1ff; /* Fundo azul bem claro */
+            color: #007bff; /* Número Azul */
+            border-color: #007bff;
+            font-weight: bold;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Estilos do Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none; /* Começa escondido */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 0 30px rgba(0, 123, 255, 0.5);
+        }
+
+        .modal-content h2 { color: #0056b3; margin-top: 0; }
+
+        .painel-revisao {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 2rem;
+            letter-spacing: 10px;
+            font-weight: bold;
+            color: #007bff;
+            border: 2px dashed #007bff;
+        }
+
+        .aviso-modal { font-size: 0.8rem; color: #666; margin-bottom: 20px; }
+    </style>
 </head>
 <body>
+    <div id="modal-final" class="modal-overlay">
+        <div class="modal-content">
+            <h2>🔒 Missão Quase Concluída!</h2>
+            <p>Você coletou os dígitos necessários. Já decorou o código?</p>
+            <div class="painel-revisao">
+                <span id="revisao-codigo"></span>
+            </div>
+            <p class="aviso-modal">Ao clicar em "Ir para o Cofre", o tempo será registrado e você não poderá voltar.</p>
+            <button onclick="confirmarIrParaCofre()" class="btn btn-blue">Ir para o Cofre</button>
+        </div>
+    </div>
+
     <div class="container">
         <section class="tela ativa">
             <div id="timer" class="timer-display">00:00.000</div>
+
+            <div id="card-k0da" class="card-k0da">
+                <div class="k0da-content">
+                    <p>🔒 Painel de Segurança</p>
+                    <div class="digitos-progress">
+                        <div class="slot-digito" id="slot-0">?</div>
+                        <div class="slot-digito" id="slot-1">?</div>
+                        <div class="slot-digito" id="slot-2">?</div>
+                        <div class="slot-digito" id="slot-3">?</div>
+                        <div class="slot-digito" id="slot-4">?</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="pergunta-box">
                 <strong id="num-questao">Questão 1</strong><br>
                 <span id="texto-pergunta">Carregando...</span>
@@ -21,7 +149,7 @@
     </div>
 
     <script>
-        const banco = [
+        const bancoFacil = [
             { q: "Qual comando mostra algo na tela?", a: ["leia()", "escreva()", "programa", "inicio"], c: "escreva()" },
             { q: "Para guardar um nome usamos o tipo:", a: ["inteiro", "real", "cadeia", "logico"], c: "cadeia" },
             { q: "Como se inicia um comentário de uma linha?", a: ["//", "/*", "#", "--"], c: "//" },
@@ -34,13 +162,44 @@
             { q: "Qual laço de repetição usamos com contador?", a: ["se", "escolha", "para", "pare"], c: "para" }
         ];
 
+        const bancoMedio = [
+            { q: "Qual o operador lógico para 'E' em Portugol?", a: ["&", "e", "and", "&&"], c: "e" },
+            { q: "Em um vetor de tamanho 5, qual o índice do último elemento?", a: ["5", "6", "4", "0"], c: "4" },
+            { q: "Qual o resultado da expressão (5 + 3 * 2)?", a: ["16", "11", "13", "10"], c: "11" },
+            { q: "O laço 'faca...enquanto' garante que o código execute:", a: ["Zero vezes", "No máximo 1 vez", "Pelo menos 1 vez", "Para sempre"], c: "Pelo menos 1 vez" },
+            { q: "Qual comando interrompe um laço imediatamente?", a: ["pare", "parar", "stop", "sair"], c: "pare" },
+            { q: "Como se declara um vetor de inteiros com 3 posições?", a: ["inteiro v[3]", "vetor v(3)", "inteiro v = 3", "v[3]: inteiro"], c: "inteiro v[3]" },
+            { q: "Qual o operador para 'OU' em Portugol?", a: ["||", "ou", "or", "|"], c: "ou" },
+            { q: "O que acontece se não usarmos 'pare' no 'caso' do 'escolha'?", a: ["Erro de sintaxe", "Executa o próximo caso", "O programa trava", "Fecha o programa"], c: "Executa o próximo caso" },
+            { q: "A expressão (10 > 5 e 3 < 1) resulta em:", a: ["verdadeiro", "falso", "erro", "nulo"], c: "falso" },
+            { q: "Qual função da biblioteca 'Util' gera números aleatórios?", a: ["aleatorio()", "sortear()", "random()", "gerar()"], c: "sortear()" }
+        ];
+
+        const bancoDificil = [
+            { q: "Em uma matriz mat[3][4], o primeiro número (3) refere-se a:", a: ["Colunas", "Linhas", "Elementos", "Páginas"], c: "Linhas" },
+            { q: "Qual o resultado de: nao(5 > 2 ou 3 == 3)?", a: ["verdadeiro", "falso", "erro", "1"], c: "falso" },
+            { q: "Como acessamos a quantidade de caracteres de uma cadeia?", a: ["tam()", "tamanho_texto()", "comp()", "extensao()"], c: "tamanho_texto()" },
+            { q: "Para usar a função 'arredondar', como se importa a biblioteca?", a: ["import Matematica", "inclua biblioteca Matematica", "use Matematica", "load Matematica"], c: "inclua biblioteca Matematica" },
+            { q: "Qual o resultado de 15 / 2 em uma variável inteira?", a: ["7.5", "7", "8", "Erro"], c: "7" },
+            { q: "Qual estrutura é melhor para percorrer uma matriz completa?", a: ["Um laço 'para'", "Dois laços 'para' aninhados", "Um 'se' e um 'para'", "Estrutura 'escolha'"], c: "Dois laços 'para' aninhados" },
+            { q: "O que a função 'u.aguarde(1000)' faz (Util)?", a: ["Soma 1000", "Pausa por 1 segundo", "Pausa por 10 segundos", "Gera o número 1000"], c: "Pausa por 1 segundo" },
+            { q: "Variáveis globais devem ser declaradas:", a: ["Dentro da função inicio", "Fora de qualquer função", "Dentro de um laço", "Ao final do programa"], c: "Fora de qualquer função" },
+            { q: "Qual o operador de negação lógica?", a: ["!", "not", "nao", "~"], c: "nao" },
+            { q: "O que faz a função 'txt.extrair_subtexto(c, 0, 1)'?", a: ["Apaga o texto", "Pega a primeira letra", "Inverte o texto", "Pega a última letra"], c: "Pega a primeira letra" }
+        ];
+
         let perguntas = banco.sort(() => Math.random() - 0.5).slice(0, 5);
         let indice = 0, acertos = 0, inicio = Date.now();
+        let timerRodando = true; 
+        let tempoFinalSalvo = 0; 
+        let podeSair = false; // VARIAVEL CHAVE: Controla se o alerta deve aparecer
+        const codigoSecreto = "{{ codigo_secreto }}"; 
 
         function mostrar() {
             const p = perguntas[indice];
             document.getElementById('num-questao').innerText = `Questão ${indice + 1} de 5`;
             document.getElementById('texto-pergunta').innerText = p.q;
+
             const container = document.getElementById('container-alternativas');
             container.innerHTML = '';
             
@@ -61,6 +220,12 @@
             if (escolha === correta) {
                 btnClicado.classList.add('correta');
                 acertos++;
+
+                const slot = document.getElementById(`slot-${indice}`);
+                if (slot) {
+                    slot.innerText = codigoSecreto[indice];
+                    slot.classList.add('revelado');
+                }
             } else {
                 btnClicado.classList.add('errada');
                 todosOsBotoes.forEach(b => {
@@ -80,18 +245,36 @@
             }
         }
 
-        async function finalizar() {
-            const tempo = Date.now() - inicio;
-            const nome = localStorage.getItem('usuarioAtual');
+        function finalizar() {
+            timerRodando = false; 
+            tempoFinalSalvo = Date.now() - inicio;
+
+            const slots = document.querySelectorAll('.slot-digito');
+            let codigoColetado = "";
+            slots.forEach(slot => {
+                codigoColetado += slot.innerText === "?" ? "_" : slot.innerText;
+            });
             
-            const dados = {
-                nome: nome,
-                acertos: acertos,
-                tempo: tempo,
-                tempoTexto: formatar(tempo)
+            const revisao = document.getElementById('revisao-codigo');
+            if(revisao) revisao.innerText = codigoColetado;
+
+            const modal = document.getElementById('modal-final');
+            if(modal) modal.style.display = 'flex';
+        }
+
+        async function confirmarIrParaCofre() {
+            // 1. Autoriza a saída para que o evento 'beforeunload' não dispare o alerta
+            podeSair = true; 
+
+            const nome = localStorage.getItem('usuarioAtual');
+            const dados = { 
+                nome: nome, 
+                acertos: acertos, 
+                tempo: tempoFinalSalvo, 
+                tempoTexto: formatar(tempoFinalSalvo) 
             };
 
-            // Envia o resultado para o servidor Django
+            // 2. Envia os dados
             await fetch("{% url 'salvar_resultado' %}", {
                 method: 'POST',
                 headers: {
@@ -101,7 +284,8 @@
                 body: JSON.stringify(dados)
             });
 
-            window.location.href = "{% url 'ranking' %}";
+            // 3. Redireciona (agora sem o alerta chato)
+            window.location.href = "{% url 'desbloquear_cofre' %}";
         }
 
         function formatar(ms) {
@@ -112,8 +296,27 @@
         }
 
         setInterval(() => {
-            document.getElementById('timer').innerText = formatar(Date.now() - inicio);
+            if (timerRodando) {
+                document.getElementById('timer').innerText = formatar(Date.now() - inicio);
+            }
         }, 10);
+
+        // --- PROTEÇÕES ---
+        window.addEventListener('keydown', function (e) {
+            if (e.which === 116 || (e.ctrlKey && e.which === 82) || e.which === 123) {
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('contextmenu', e => e.preventDefault());
+
+        // AJUSTE AQUI: O alerta só aparece se 'podeSair' for falso
+        window.addEventListener('beforeunload', function (e) {
+            if (!podeSair) {
+                e.preventDefault();
+                e.returnValue = ''; 
+            }
+        });
 
         mostrar();
     </script>

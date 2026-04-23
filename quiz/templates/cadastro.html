@@ -2,14 +2,22 @@
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Desafio Portugol</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="{% static 'style/style.css' %}">
 </head>
+
 <body>
+
+    <div class="animacao-fundo" data-img="{% static '../static/img/SimboloS.png' %}"></div>
+
+
+
     <div class="container">
+
         <section class="tela ativa">
             <h1>Bem-vindo ao desafio do cofre secreto!</h1>
             <p>Desvende os codigos e descubra o segredo!</p>
@@ -18,7 +26,8 @@
             <br>
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn btn-blue" onclick="irParaJogo()">Continuar</button>
-                <button class="btn btn-alt" style="text-align: center;" onclick="window.location.href='{% url 'ranking' %}'">Ver Ranking</button>
+                <button class="btn btn-alt" style="text-align: center;"
+                    onclick="window.location.href='{% url 'ranking' %}'">Ver Ranking</button>
             </div>
         </section>
     </div>
@@ -32,5 +41,8 @@
             window.location.href = "{% url 'dificuldade' %}";
         }
     </script>
+
+    <script src="{% static 'scripts/animacaoCad.js' %}"></script>
 </body>
+
 </html>

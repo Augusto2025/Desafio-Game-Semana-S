@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cofre Digital - Segurança Máxima</title>
+    <link rel="stylesheet" href="{% static 'style/stylesCofre.css' %}">
+    
+</head>
+<body>
+
+    <div class="painel-principal">
+        <div class="parafuso p1"></div><div class="parafuso p2"></div>
+        <div class="parafuso p3"></div><div class="parafuso p4"></div>
+
+        <div class="interface-digital">
+            <div class="visor-lcd">
+                <div class="inputs-container">
+                    <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
+                    <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
+                    <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
+                    <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
+                    <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
+                </div>
+                <div id="msg" class="status-msg">Insira o Código</div>
+            </div>
+            
+            <button onclick="verificar()" class="btn-abrir">Processar Código</button>
+        </div>
+
+        <div class="engrenagem-container">
+            <div id="volante" class="volante">
+                <div class="volante-centro"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const inputs = document.querySelectorAll('.digito-input');
+        const volante = document.getElementById('volante');
+        const msg = document.getElementById('msg');
+
+        inputs[0].focus();
+
+        inputs.forEach((input, i) => {
+            input.addEventListener('input', (e) => {
+                if (input.value && i < inputs.length - 1) inputs[i + 1].focus();
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !input.value && i > 0) inputs[i - 1].focus();
+            });
+        });
+
+        async function verificar() {
+            const tentativa = Array.from(inputs).map(i => i.value).join('');
+            
+            if(tentativa.length < 5) return;
+
+            const res = await fetch("{% url 'desbloquear_cofre' %}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                body: JSON.stringify({ tentativa })
+            });
+
+            const data = await res.json();
+
+            if (data.status === 'sucesso') {
+                msg.innerText = "ACESSO CONCEDIDO";
+                msg.className = "status-msg sucesso-txt";
+                volante.classList.add('girar'); 
+                
+                setTimeout(() => {
+                    window.location.href = "{% url 'premio' %}";
+                }, 3000);
+            } else {
+                msg.innerText = "CÓDIGO INVÁLIDO";
+                msg.className = "status-msg erro-txt";
+                inputs.forEach(i => i.value = '');
+                inputs[0].focus();
+            }
+        }
+    </script>
+</body>
+</html>
