@@ -63,3 +63,6 @@ def desbloquear_cofre(request):
             return JsonResponse({'status': 'erro', 'mensagem': 'Código Inválido!'})
 
     return render(request, 'cofre.html')
+
+def api_premio(request):
+    return render(request, 'premio.html')
