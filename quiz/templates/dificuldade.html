@@ -1,0 +1,47 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Escolha a Dificuldade</title>
+  <link rel="stylesheet" href="{% static 'dificuldade.css' %}">
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Fácil -->
+  <div class="card" onclick="jogar('facil')">
+    <div class="card-front facil">
+      <img src="{% static 'img/content.webp' %}">
+      <h2>Fácil</h2>
+    </div>
+  </div>
+
+  <!-- Médio -->
+  <div class="card" onclick="jogar('medio')">
+    <div class="card-front medio">
+      <img src="{% static 'img/facil.png' %}">
+      <h2>Médio</h2>
+    </div>
+  </div>
+
+  <!-- Difícil -->
+  <div class="card" onclick="jogar('dificil')">
+    <div class="card-front dificil">
+      <img src="{% static 'img/dificil.webp' %}">
+      <h2>Difícil</h2>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function jogar(nivel) {
+    window.location.href = "{% url 'desafio' %}?nivel=" + nivel;
+  }
+</script>
+
+</body>
+</html>

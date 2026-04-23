@@ -10,6 +10,9 @@ def cadastro(request):
     request.session['codigo_secreto'] = codigo_secreto
     return render(request, 'cadastro.html')
 
+def dificuldade(request):
+    return render(request, 'dificuldade.html')
+
 def desafio(request):
     # Pegamos o código que foi gerado no cadastro
     codigo = request.session.get('codigo_secreto', '00000')
@@ -29,6 +32,10 @@ def verificar_cofre(request):
 
 def ranking_view(request):
     return render(request, 'ranking.html')
+
+def desafio(request):
+    nivel = request.GET.get('nivel')
+    return render(request, 'desafio.html', {'nivel': nivel})
 
 def api_ranking(request):
     top_10 = Ranking.objects.all()[:10]
