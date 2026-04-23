@@ -6,11 +6,18 @@ import json
 def cadastro(request):
     return render(request, 'cadastro.html')
 
+def dificuldade(request):
+    return render(request, 'dificuldade.html')
+
 def desafio(request):
     return render(request, 'desafio.html')
 
 def ranking_view(request):
     return render(request, 'ranking.html')
+
+def desafio(request):
+    nivel = request.GET.get('nivel')
+    return render(request, 'desafio.html', {'nivel': nivel})
 
 def api_ranking(request):
     # Retorna o Top 5 para a atualização em tempo real

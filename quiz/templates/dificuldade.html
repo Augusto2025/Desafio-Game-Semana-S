@@ -1,79 +1,47 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   <title>Escolha a Dificuldade</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .container {
-      display: flex;
-      gap: 20px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 30px;
-      width: 150px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    }
-
-    .facil {
-      border-top: 5px solid #4CAF50;
-    }
-
-    .medio {
-      border-top: 5px solid #FFC107;
-    }
-
-    .dificil {
-      border-top: 5px solid #F44336;
-    }
-
-    h2 {
-      margin: 0;
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'dificuldade.css' %}">
 </head>
 <body>
 
-  <div class="container">
-    <div class="card facil" onclick="selecionar('Fácil')">
-      <h2>Fácil</h2>
-    
-    </div>
+<div class="container">
 
-    <div class="card medio" onclick="selecionar('Médio')">
+  <!-- Fácil -->
+  <div class="card" onclick="jogar('facil')">
+    <div class="card-front facil">
+      <img src="{% static 'imagem/content.webp' %}">
+      <h2>Fácil</h2>
+    </div>
+  </div>
+
+  <!-- Médio -->
+  <div class="card" onclick="jogar('medio')">
+    <div class="card-front medio">
+      <img src="{% static 'imagem/facil.png' %}">
       <h2>Médio</h2>
     </div>
+  </div>
 
-    <div class="card dificil" onclick="selecionar('Difícil')">
+  <!-- Difícil -->
+  <div class="card" onclick="jogar('dificil')">
+    <div class="card-front dificil">
+      <img src="{% static 'imagem/dificil.webp' %}">
       <h2>Difícil</h2>
     </div>
   </div>
 
-  <script>
-    function selecionar(nivel) {
-      alert("Você escolheu: " + nivel);
-    }
-  </script>
+</div>
+
+<script>
+  function jogar(nivel) {
+    window.location.href = "{% url 'desafio' %}?nivel=" + nivel;
+  }
+</script>
 
 </body>
 </html>

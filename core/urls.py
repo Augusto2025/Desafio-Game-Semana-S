@@ -9,4 +9,5 @@ urlpatterns = [
     path('ranking/', views.ranking_view, name='ranking'),
     path('api/ranking/', views.api_ranking, name='api_ranking'),
     path('salvar-resultado/', views.salvar_resultado, name='salvar_resultado'),
+    path('dificuldade/', views.dificuldade, name='dificuldade'),
 ]
