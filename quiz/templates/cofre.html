@@ -25,7 +25,10 @@
                 <div id="msg" class="status-msg">Insira o Código</div>
             </div>
             
-            <button onclick="verificar()" class="btn-abrir">Processar Código</button>
+            <div style="display: flex; gap: 20px; margin-top: 30px;">
+                <button onclick="verificar()" class="btn-abrir">Enviar Código</button>
+                <button onclick="window.location.href='{% url 'ranking' %}'" class="btn-sair">Finalizar sem o Segredo</button>
+            </div>
         </div>
 
         <div class="engrenagem-container">
