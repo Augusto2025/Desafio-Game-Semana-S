@@ -6,11 +6,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo - Desafio Portugol</title>
     <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+        /* Painel fixo no canto inferior direito */
+        .card-k0da {
+            position: fixed;
+            bottom: 207px;
+            right: 20px;
+            background: #ffffff; /* Fundo Branco */
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 280px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .k0da-content p {
+            margin: 0 0 10px 0;
+            font-size: 0.85rem;
+            color: #0056b3; /* Texto Azul */
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Container dos quadrados dos dígitos */
+        .digitos-progress {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .slot-digito {
+            width: 45px;
+            height: 55px;
+            background: #f8f9fa; /* Cinza bem clarinho */
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #adb5bd; /* Cor apagada para o '?' */
+            transition: all 0.4s ease;
+        }
+
+        /* Classe para quando o dígito é revelado - Azul Vibrante */
+        .revelado {
+            background: #e7f1ff; /* Fundo azul bem claro */
+            color: #007bff; /* Número Azul */
+            border-color: #007bff;
+            font-weight: bold;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <section class="tela ativa">
             <div id="timer" class="timer-display">00:00.000</div>
+
+            <div id="card-k0da" class="card-k0da">
+                <div class="k0da-content">
+                    <p>🔒 Painel de Segurança</p>
+                    <div class="digitos-progress">
+                        <div class="slot-digito" id="slot-0">?</div>
+                        <div class="slot-digito" id="slot-1">?</div>
+                        <div class="slot-digito" id="slot-2">?</div>
+                        <div class="slot-digito" id="slot-3">?</div>
+                        <div class="slot-digito" id="slot-4">?</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="pergunta-box">
                 <strong id="num-questao">Questão 1</strong><br>
                 <span id="texto-pergunta">Carregando...</span>
@@ -36,11 +115,13 @@
 
         let perguntas = banco.sort(() => Math.random() - 0.5).slice(0, 5);
         let indice = 0, acertos = 0, inicio = Date.now();
+        const codigoSecreto = "{{ codigo_secreto }}"; 
 
         function mostrar() {
             const p = perguntas[indice];
             document.getElementById('num-questao').innerText = `Questão ${indice + 1} de 5`;
             document.getElementById('texto-pergunta').innerText = p.q;
+
             const container = document.getElementById('container-alternativas');
             container.innerHTML = '';
             
@@ -61,6 +142,13 @@
             if (escolha === correta) {
                 btnClicado.classList.add('correta');
                 acertos++;
+
+                // --- REVELAÇÃO GRADUAL NO PAINEL ---
+                const slot = document.getElementById(`slot-${indice}`);
+                if (slot) {
+                    slot.innerText = codigoSecreto[indice];
+                    slot.classList.add('revelado');
+                }
             } else {
                 btnClicado.classList.add('errada');
                 todosOsBotoes.forEach(b => {
@@ -83,15 +171,8 @@
         async function finalizar() {
             const tempo = Date.now() - inicio;
             const nome = localStorage.getItem('usuarioAtual');
-            
-            const dados = {
-                nome: nome,
-                acertos: acertos,
-                tempo: tempo,
-                tempoTexto: formatar(tempo)
-            };
+            const dados = { nome, acertos, tempo, tempoTexto: formatar(tempo) };
 
-            // Envia o resultado para o servidor Django
             await fetch("{% url 'salvar_resultado' %}", {
                 method: 'POST',
                 headers: {
@@ -101,7 +182,7 @@
                 body: JSON.stringify(dados)
             });
 
-            window.location.href = "{% url 'ranking' %}";
+            window.location.href = "{% url 'desbloquear_cofre' %}";
         }
 
         function formatar(ms) {

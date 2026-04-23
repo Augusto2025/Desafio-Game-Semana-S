@@ -2,26 +2,42 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from .models import Ranking
 import json
+import random
 
 def cadastro(request):
+    # Sempre que entrar no cadastro, geramos um novo código de 5 dígitos
+    codigo_secreto = f"{random.randint(0, 99999):05d}"
+    request.session['codigo_secreto'] = codigo_secreto
     return render(request, 'cadastro.html')
 
 def desafio(request):
-    return render(request, 'desafio.html')
+    # Pegamos o código que foi gerado no cadastro
+    codigo = request.session.get('codigo_secreto', '00000')
+    return render(request, 'desafio.html', {'codigo_secreto': codigo})
+
+def verificar_cofre(request):
+    """ Nova view para validar o código via AJAX ou Form """
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        tentativa = data.get('tentativa')
+        codigo_real = request.session.get('codigo_secreto')
+        
+        if tentativa == codigo_real:
+            return JsonResponse({'status': 'desbloqueado', 'premio': 'LINK_OU_CONTEUDO_AQUI'})
+        else:
+            return JsonResponse({'status': 'erro', 'mensagem': 'Código incorreto!'})
 
 def ranking_view(request):
     return render(request, 'ranking.html')
 
 def api_ranking(request):
-    # Retorna o Top 5 para a atualização em tempo real
-    top_5 = Ranking.objects.all()[:5]
+    top_5 = Ranking.objects.all()[:10]
     data = list(top_5.values('nome', 'acertos', 'tempo_texto'))
     return JsonResponse(data, safe=False)
 
 def salvar_resultado(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        # Lógica de sobrescrever: update_or_create busca pelo nome
         Ranking.objects.update_or_create(
             nome=data['nome'],
             defaults={
@@ -31,3 +47,19 @@ def salvar_resultado(request):
             }
         )
         return JsonResponse({'status': 'sucesso'})
+    
+def desbloquear_cofre(request):
+    codigo_real = request.session.get('codigo_secreto', '00000')
+    print(f"Código real para desbloquear o cofre: {codigo_real}")  # Log para debug
+    
+    if request.method == 'POST':
+        # Pega os dados do formulário
+        data = json.loads(request.body)
+        tentativa = data.get('tentativa')
+
+        if tentativa == codigo_real:
+            return JsonResponse({'status': 'sucesso', 'mensagem': 'Acesso Autorizado!'})
+        else:
+            return JsonResponse({'status': 'erro', 'mensagem': 'Código Inválido!'})
+
+    return render(request, 'cofre.html')
