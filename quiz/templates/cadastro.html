@@ -38,7 +38,7 @@
             if (!nome) return alert("Por favor, digite seu nome!");
             // Guardamos no localStorage apenas para identificar o jogador durante a sessão
             localStorage.setItem('usuarioAtual', nome);
-            window.location.href = "{% url 'desafio' %}";
+            window.location.href = "{% url 'dificuldade' %}";
         }
     </script>
 
