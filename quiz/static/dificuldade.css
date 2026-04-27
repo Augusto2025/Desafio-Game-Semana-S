@@ -6,6 +6,17 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(
+        135deg,
+        #0b1d3a 0%,
+        #1e3a8a 25%,
+        #f59e0b 55%,
+        #f97316 80%,
+        #0b1d3a 100%
+    );
+    background-attachment: fixed;
 }
 
 .container {
@@ -48,12 +59,15 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   
 }
 
 /* FRENTE */
 .card-front {
   transform: rotateY(0deg);
+  position: relative;
+  overflow: hidden;
 }
 
 .card-front img {
@@ -65,9 +79,9 @@ body {
 }
 
 /* CORES */
-.facil { background-color: #4CAF50; }
-.medio { background-color: #0059ff; }
-.dificil { background-color: #fc0404; }
+.facil { background-color: #ffff; }
+.medio { background-color: #ffff; }
+.dificil { background-color: #ffff; }
 
 /* VERSO */
 .card-back {
@@ -99,6 +113,151 @@ body {
 /* TÍTULO */
 h2 {
   margin-top: 50px;
-  color: white;
+  color: rgb(0, 0, 0);
   font-size: 30px;
+}
+
+.card:hover .card-front::before {
+    left: 0;
+}
+
+
+
+.card-front::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%; /* começa zerado */
+    transition: height 0.4s ease;
+}
+
+.card:hover .card-front::after {
+    height: 15%; /* sobe até o topo */
+}
+
+.facil::after {
+    background: #4CAF50; /* azul */
+}
+
+.medio::after {
+    background: #0059ff;  /* amarelo */
+}
+
+.dificil::after {
+    background: #fc0404; /* laranja */
+}
+
+/* Fácil - azul */
+.card:hover .facil {
+    box-shadow: 0 0 50px #4CAF50;
+}
+
+/* Médio - amarelo */
+.card:hover .medio {
+    box-shadow: 0 0 50px #0059ff;
+}
+
+/* Difícil - vermelho/laranja */
+.card:hover .dificil {
+    box-shadow: 0 0 50px #fc0404;
+}
+
+/* FUNDO ESCURO */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+}
+
+/* CAIXA DO MODAL */
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  width: 350px;
+  box-shadow: 0 0 30px rgba(0, 123, 255, 0.5);
+  animation: aparecer 0.3s ease;
+}
+
+/* BOTÕES */
+.modal-buttons {
+  margin-top: 20px;
+}
+
+.modal-buttons button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ANIMAÇÃO */
+@keyframes aparecer {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-buttons button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  
+}
+
+/* BOTÃO SIM */
+.modal-buttons button:last-child {
+  background: #22c55e;
+  color: white;
+}
+
+/* HOVER SIM */
+.modal-buttons button:last-child:hover {
+  background: #16a34a;
+  transform: scale(1.1);
+}
+
+/* BOTÃO NÃO */
+.modal-buttons button:first-child {
+  background: #ef4444;
+  color: white;
+}
+
+/* HOVER NÃO */
+.modal-buttons button:first-child:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.modal-content h2 {
+  position: relative;
+  top: -30px;
+  color: #0056b3;
+}
+
+.modal-content p {
+  position: relative;
+  top: -20px;
 }
