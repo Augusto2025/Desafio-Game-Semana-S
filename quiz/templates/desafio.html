@@ -281,19 +281,19 @@
             if(modal) modal.style.display = 'flex';
         }
 
+        // Dentro do desafio.html
         async function confirmarIrParaCofre() {
-            // 1. Autoriza a saída para que o evento 'beforeunload' não dispare o alerta
             podeSair = true; 
+            const nivelAtual = new URLSearchParams(window.location.search).get('nivel') || 'facil';
 
-            const nome = localStorage.getItem('usuarioAtual');
             const dados = { 
-                nome: nome, 
+                nome: localStorage.getItem('usuarioAtual'), 
                 acertos: acertos, 
                 tempo: tempoFinalSalvo, 
-                tempoTexto: formatar(tempoFinalSalvo) 
+                tempoTexto: formatar(tempoFinalSalvo),
+                nivel: nivelAtual // <--- ENVIE O NÍVEL AQUI
             };
 
-            // 2. Envia os dados
             await fetch("{% url 'salvar_resultado' %}", {
                 method: 'POST',
                 headers: {
@@ -303,7 +303,6 @@
                 body: JSON.stringify(dados)
             });
 
-            // 3. Redireciona (agora sem o alerta chato)
             window.location.href = "{% url 'desbloquear_cofre' %}";
         }
 

@@ -6,6 +6,7 @@ class Ranking(models.Model):
     tempo_ms = models.IntegerField()  # Guardamos em milissegundos
     tempo_texto = models.CharField(max_length=20)
     data_registro = models.DateTimeField(auto_now=True)
+    nivel = models.CharField(max_length=10, default='facil')
 
     class Meta:
         ordering = ['-acertos', 'tempo_ms'] # Ordenação padrão: mais acertos, menor tempo

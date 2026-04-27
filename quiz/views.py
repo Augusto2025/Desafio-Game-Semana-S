@@ -43,15 +43,23 @@ def desafio(request):
     })
 
 def api_ranking(request):
-    top_10 = Ranking.objects.all()[:10]
-    data = list(top_10.values('nome', 'acertos', 'tempo_texto'))
-    return JsonResponse(data, safe=False)
+    def get_top(nivel):
+        top = Ranking.objects.filter(nivel=nivel)[:10]
+        return list(top.values('nome', 'acertos', 'tempo_texto'))
+
+    data = {
+        'facil': get_top('facil'),
+        'medio': get_top('medio'),
+        'dificil': get_top('dificil'),
+    }
+    return JsonResponse(data)
 
 def salvar_resultado(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         Ranking.objects.update_or_create(
             nome=data['nome'],
+            nivel=data.get('nivel', 'facil'), # Salva o nível vindo do JS
             defaults={
                 'acertos': data['acertos'],
                 'tempo_ms': data['tempo'],
