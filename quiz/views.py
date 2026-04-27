@@ -35,7 +35,12 @@ def ranking_view(request):
 
 def desafio(request):
     nivel = request.GET.get('nivel')
-    return render(request, 'desafio.html', {'nivel': nivel})
+    codigo = request.session.get('codigo_secreto', '00000')
+    
+    return render(request, 'desafio.html', {
+        'nivel': nivel, 
+        'codigo_secreto': codigo
+    })
 
 def api_ranking(request):
     top_10 = Ranking.objects.all()[:10]
