@@ -188,7 +188,7 @@
             { q: "O que faz a função 'txt.extrair_subtexto(c, 0, 1)'?", a: ["Apaga o texto", "Pega a primeira letra", "Inverte o texto", "Pega a última letra"], c: "Pega a primeira letra" }
         ];
 
-        let perguntas = banco.sort(() => Math.random() - 0.5).slice(0, 5);
+        let perguntas = bancoMedio.sort(() => Math.random() - 0.5).slice(0, 5);
         let indice = 0, acertos = 0, inicio = Date.now();
         let timerRodando = true; 
         let tempoFinalSalvo = 0; 
