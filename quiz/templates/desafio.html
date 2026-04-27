@@ -188,7 +188,26 @@
             { q: "O que faz a função 'txt.extrair_subtexto(c, 0, 1)'?", a: ["Apaga o texto", "Pega a primeira letra", "Inverte o texto", "Pega a última letra"], c: "Pega a primeira letra" }
         ];
 
-        let perguntas = bancoFacil.sort(() => Math.random() - 0.5).slice(0, 5);
+        const urlParams = new URLSearchParams(window.location.search);
+        const dificuldade = urlParams.get('nivel');
+
+        let bancoSelecionado;
+
+        if (dificuldade === 'facil') {
+            bancoSelecionado = bancoFacil;
+        } else if (dificuldade === 'medio') {
+            bancoSelecionado = bancoMedio;
+        } else if (dificuldade === 'dificil') {
+            bancoSelecionado = bancoDificil;
+        } else {
+            bancoSelecionado = bancoFacil;
+        }
+
+        // ✅ AQUI É O ÚNICO CERTO
+        let perguntas = bancoSelecionado
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 5);
+            
         let indice = 0, acertos = 0, inicio = Date.now();
         let timerRodando = true; 
         let tempoFinalSalvo = 0; 
