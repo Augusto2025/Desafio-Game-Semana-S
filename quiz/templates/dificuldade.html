@@ -1,6 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
+
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
@@ -12,6 +13,7 @@
 <div class="container">
 
   <!-- Fácil -->
+
   <div class="card" onclick="jogar('facil')">
     <div class="card-front facil">
       <img src="{% static 'img/content.webp' %}">
@@ -20,6 +22,7 @@
   </div>
 
   <!-- Médio -->
+
   <div class="card" onclick="jogar('medio')">
     <div class="card-front medio">
       <img src="{% static 'img/facil.png' %}">
@@ -28,6 +31,7 @@
   </div>
 
   <!-- Difícil -->
+
   <div class="card" onclick="jogar('dificil')">
     <div class="card-front dificil">
       <img src="{% static 'img/dificil.webp' %}">
@@ -37,9 +41,41 @@
 
 </div>
 
+<!-- MODAL -->
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <h2 class="jogo-inicia">Jogo iniciando...</h2>
+    <p>Você terá <strong>3 minutos</strong> para descobrir o código do cofre.</p>
+    <p><strong>Você está preparado?</strong></p>
+
+
+<div class="modal-buttons">
+  <button type="button" onclick="cancelar()">Não</button>
+  <button onclick="confirmar()">Sim</button>
+</div>
+
+
+  </div>
+</div>
+
 <script>
+  let nivelSelecionado = null;
+
   function jogar(nivel) {
-    window.location.href = "{% url 'desafio' %}?nivel=" + nivel;
+    nivelSelecionado = nivel;
+
+    document.getElementById("modal").style.display = "flex";
+  }
+
+  function confirmar() {
+    localStorage.setItem('dificuldade', nivelSelecionado);
+
+    window.location.href = "{% url 'desafio' %}?nivel=" + nivelSelecionado;
+  }
+
+  function cancelar() {
+    document.getElementById("modal").style.display = "none";
   }
 </script>
 
