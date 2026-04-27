@@ -57,9 +57,10 @@ def api_ranking(request):
 def salvar_resultado(request):
     if request.method == 'POST':
         data = json.loads(request.body)
+        
         Ranking.objects.update_or_create(
             nome=data['nome'],
-            nivel=data.get('nivel', 'facil'), # Salva o nível vindo do JS
+            nivel=data.get('nivel', 'facil'), # Crucial: identifica em qual card salvar
             defaults={
                 'acertos': data['acertos'],
                 'tempo_ms': data['tempo'],

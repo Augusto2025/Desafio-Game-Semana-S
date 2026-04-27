@@ -1,7 +1,7 @@
 from django.db import models
 
 class Ranking(models.Model):
-    nome = models.CharField(max_length=100, unique=True)
+    nome = models.CharField(max_length=100)
     acertos = models.IntegerField()
     tempo_ms = models.IntegerField()  # Guardamos em milissegundos
     tempo_texto = models.CharField(max_length=20)
