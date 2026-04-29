@@ -7,57 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Desafio Portugol</title>
     <link rel="stylesheet" href="{% static 'style/style.css' %}">
-    <style>
-        /* Estilos do Modal de Alerta */
-        .modal-aviso {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none; /* Escondido por padrão */
-            justify-content: center;
-            align-items: center;
-            z-index: 3000;
-        }
-
-        .modal-aviso-content {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            max-width: 320px;
-            width: 90%;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            animation: entradaModal 0.3s ease-out;
-        }
-
-        @keyframes entradaModal {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-aviso-content h3 {
-            color: #d9534f; /* Vermelho para erro */
-            margin-top: 0;
-        }
-
-        .modal-aviso-content p {
-            color: #555;
-            margin: 15px 0;
-            line-height: 1.4;
-        }
-
-        .btn-fechar {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .btn-fechar:hover { background: #0056b3; }
-    </style>
+    <link rel="stylesheet" href="{% static 'style/Cadastro.css' %}">
 </head>
 
 <body>
@@ -87,6 +37,7 @@
         </section>
     </div>
 
+    {% comment %} não mexer, o django está integrado com o js {% endcomment %}
     <script>
         // O Django vai transformar a lista de nomes em uma lista de strings no JS
         const nomesCadastrados = [
@@ -151,6 +102,6 @@
         }
     </script>
 
-    <script src="{% static 'scripts/animacaoCad.js' %}"></script>
+    <script src="{% static 'scripts/animacao.js' %}"></script>
 </body>
 </html>

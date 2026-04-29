@@ -1,83 +1,63 @@
 {% load static %}
 
 <!DOCTYPE html>
-
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   <title>Escolha a Dificuldade</title>
-  <link rel="stylesheet" href="{% static 'dificuldade.css' %}">
+  <link rel="stylesheet" href="{% static 'style/dificuldade.css' %}">
 </head>
 <body>
 
-<div class="container">
+  <div class="container">
 
-  <!-- Fácil -->
+    <!-- Fácil -->
 
-  <div class="card" onclick="jogar('facil')">
-    <div class="card-front facil">
-      <img src="{% static 'img/content.webp' %}">
-      <h2>Fácil</h2>
+    <div class="card" onclick="jogar('facil')">
+      <div class="card-front facil">
+        <img src="{% static 'img/content.webp' %}">
+        <h2>Fácil</h2>
+      </div>
+    </div>
+
+    <!-- Médio -->
+
+    <div class="card" onclick="jogar('medio')">
+      <div class="card-front medio">
+        <img src="{% static 'img/facil.png' %}">
+        <h2>Médio</h2>
+      </div>
+    </div>
+
+    <!-- Difícil -->
+
+    <div class="card" onclick="jogar('dificil')">
+      <div class="card-front dificil">
+        <img src="{% static 'img/dificil.webp' %}">
+        <h2>Difícil</h2>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL -->
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h2 class="jogo-inicia">Jogo iniciando...</h2>
+      <p>Você terá <strong>3 minutos</strong> para descobrir o código do cofre.</p>
+      <p><strong>Você está preparado?</strong></p>
+
+
+  <div class="modal-buttons">
+    <button type="button" onclick="cancelar()">Não</button>
+    <button onclick="confirmar()">Sim</button>
+  </div>
+
+
     </div>
   </div>
 
-  <!-- Médio -->
-
-  <div class="card" onclick="jogar('medio')">
-    <div class="card-front medio">
-      <img src="{% static 'img/facil.png' %}">
-      <h2>Médio</h2>
-    </div>
-  </div>
-
-  <!-- Difícil -->
-
-  <div class="card" onclick="jogar('dificil')">
-    <div class="card-front dificil">
-      <img src="{% static 'img/dificil.webp' %}">
-      <h2>Difícil</h2>
-    </div>
-  </div>
-
-</div>
-
-<!-- MODAL -->
-
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <h2 class="jogo-inicia">Jogo iniciando...</h2>
-    <p>Você terá <strong>3 minutos</strong> para descobrir o código do cofre.</p>
-    <p><strong>Você está preparado?</strong></p>
-
-
-<div class="modal-buttons">
-  <button type="button" onclick="cancelar()">Não</button>
-  <button onclick="confirmar()">Sim</button>
-</div>
-
-
-  </div>
-</div>
-
-<script>
-  let nivelSelecionado = null;
-
-  function jogar(nivel) {
-    nivelSelecionado = nivel;
-
-    document.getElementById("modal").style.display = "flex";
-  }
-
-  function confirmar() {
-    localStorage.setItem('dificuldade', nivelSelecionado);
-
-    window.location.href = "{% url 'desafio' %}?nivel=" + nivelSelecionado;
-  }
-
-  function cancelar() {
-    document.getElementById("modal").style.display = "none";
-  }
-</script>
-
+  <script src="{% static 'scripts/selecionarDificuldade.js' %}"></script>
 </body>
 </html>

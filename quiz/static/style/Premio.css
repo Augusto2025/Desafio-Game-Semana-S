@@ -1,0 +1,53 @@
+/* Estilos específicos para a tela de conclusão */
+body {
+    background-color: #1a1a1a;
+    /* Fundo escuro para contrastar com o cofre */
+    overflow: hidden;
+    /* Evita barras de rolagem com os confetes */
+}
+
+.container-conclusao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.paineis-wrapper {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+/* Painel de Sucesso (Esquerda) */
+.painel-sucesso {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 255, 0, 0.3);
+    border: 4px solid #2ecc71;
+    max-width: 500px;
+}
+
+.painel-sucesso h1 {
+    color: #27ae60;
+    font-size: 2.5rem;
+    margin-top: 0;
+    text-transform: uppercase;
+}
+
+.icon-sucesso {
+    width: 300px;
+    height: 300px;
+    margin: 20px 0;
+    color: #2ecc71;
+    justify-self: center;
+    align-content: center;
+}
+
+.painel-sucesso p {
+    color: #333;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}

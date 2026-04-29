@@ -6,59 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cofre Aberto - Missão Cumprida!</title>
     <link rel="stylesheet" href="{% static 'style/style.css' %}">
-    <style>
-        /* Estilos específicos para a tela de conclusão */
-        body {
-            background-color: #1a1a1a; /* Fundo escuro para contrastar com o cofre */
-            overflow: hidden; /* Evita barras de rolagem com os confetes */
-        }
-
-        .container-conclusao {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .paineis-wrapper {
-            display: flex;
-            gap: 40px;
-            align-items: center;
-        }
-
-        /* Painel de Sucesso (Esquerda) */
-        .painel-sucesso {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 255, 0, 0.3);
-            border: 4px solid #2ecc71;
-            max-width: 500px;
-        }
-
-        .painel-sucesso h1 {
-            color: #27ae60;
-            font-size: 2.5rem;
-            margin-top: 0;
-            text-transform: uppercase;
-        }
-
-        .icon-sucesso {
-            width: 300px;
-            height: 300px;
-            margin: 20px 0;
-            color: #2ecc71;
-            justify-self: center;
-            align-content: center;
-        }
-
-        .painel-sucesso p {
-            color: #333;
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'style/Premio.css' %}">
 </head>
 <body>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -77,38 +25,6 @@
         </div>
     </div>
 
-    <script>
-        // Lógica dos Confetes - Dispara ao carregar a página
-        window.onload = function() {
-            // Configuração dos confetes
-            const duration = 3 * 1000; // 3 segundos
-            const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
-
-            const interval = setInterval(function() {
-                const timeLeft = animationEnd - Date.now();
-
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
-
-                const particleCount = 50 * (timeLeft / duration);
-                
-                // Dispara confetes de dois cantos diferentes
-                confetti(Object.assign({}, defaults, { 
-                    particleCount, 
-                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } 
-                }));
-                confetti(Object.assign({}, defaults, { 
-                    particleCount, 
-                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } 
-                }));
-            }, 250);
-        };
-    </script>
+    <script src="{% static 'scripts/premioCofre.js' %}"></script>
 </body>
 </html>
