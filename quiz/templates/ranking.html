@@ -7,6 +7,27 @@
     <title>Ranking - Desafio Portugol</title>
     <link rel="stylesheet" href="{% static 'style/style.css' %}">
     <link rel="stylesheet" href="{% static 'style/Ranking.css' %}">
+    <style>
+      /* Estilo de destaque para o jogador atual no pódio */
+      .meu-podio .step-name {
+          color: #ffcc00 !important; /* Amarelo ouro */
+          font-weight: 900 !important;
+          text-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
+          transform: scale(1.1);
+      }
+      
+      .meu-podio .step-base {
+          border: 3px solid #ffcc00 !important;
+          box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+          animation: pulse-gold 2s infinite;
+      }
+
+      @keyframes pulse-gold {
+          0% { box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); }
+          50% { box-shadow: 0 0 25px rgba(255, 204, 0, 0.7); }
+          100% { box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); }
+      }
+    </style>
   </head>
   <body>
     <div class="animacao-fundo" data-img="{% static '../static/img/SimboloS.png' %}"></div>
@@ -72,7 +93,6 @@
         </section>
     </div>
 
-    {% comment %} não mexer, o django está integrado com o js {% endcomment %}
     <script>
       const usuarioAtual = localStorage.getItem("usuarioAtual");
 
@@ -107,16 +127,18 @@
         [1, 0, 2].forEach(i => {
             const p = top3[i];
             if (p) {
+                // Verifica se é o jogador atual
+                const ehEu = p.nome === usuarioAtual;
+                
                 podiumHTML += `
-                    <div class="podium-step">
-                        <div class="step-name" title="${p.nome}">${p.nome === usuarioAtual ? "⭐ Você" : p.nome}</div>
+                    <div class="podium-step ${ehEu ? 'meu-podio' : ''}">
+                        <div class="step-name" title="${p.nome}">${ehEu ? "⭐ Você" : p.nome}</div>
                         <div class="step-base ${classes[i]}">
                             <span>${medals[i]}</span>
                             <span>${p.acertos}/5</span>
                         </div>
                     </div>`;
             } else {
-                // Espaço vazio caso não tenha 3 jogadores ainda
                 podiumHTML += `<div class="podium-step"><div style="height:30px"></div><div class="step-base" style="background:#eee; height:30px; order:${i===0?2:(i===1?1:3)}"></div></div>`;
             }
         });
@@ -135,7 +157,7 @@
       }
 
       atualizarRanking();
-      setInterval(atualizarRanking, 5000); // Atualiza a cada 5 segundos para poupar o servidor
+      setInterval(atualizarRanking, 5000); 
     </script>
     <script src="{% static 'scripts/animacaoCad.js' %}"></script>
   </body>
