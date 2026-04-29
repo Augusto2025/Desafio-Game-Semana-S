@@ -12,7 +12,7 @@
             position: fixed;
             bottom: 230px;
             right: 20px;
-            background: #ffffff; /* Fundo Branco */
+            background: #ffffff;
             border-radius: 12px;
             padding: 15px;
             text-align: center;
@@ -28,13 +28,12 @@
         .k0da-content p {
             margin: 0 0 10px 0;
             font-size: 0.85rem;
-            color: #0056b3; /* Texto Azul */
+            color: #0056b3;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* Container dos quadrados dos dígitos */
         .digitos-progress {
             display: flex;
             justify-content: center;
@@ -44,22 +43,21 @@
         .slot-digito {
             width: 45px;
             height: 55px;
-            background: #f8f9fa; /* Cinza bem clarinho */
+            background: #f8f9fa;
             border: 2px solid #dee2e6;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.8rem;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #adb5bd; /* Cor apagada para o '?' */
+            font-family: 'Segoe UI', sans-serif;
+            color: #adb5bd;
             transition: all 0.4s ease;
         }
 
-        /* Classe para quando o dígito é revelado - Azul Vibrante */
         .revelado {
-            background: #e7f1ff; /* Fundo azul bem claro */
-            color: #007bff; /* Número Azul */
+            background: #e7f1ff;
+            color: #007bff;
             border-color: #007bff;
             font-weight: bold;
             animation: bounce 0.5s ease;
@@ -71,12 +69,12 @@
             100% { transform: translateY(0); }
         }
 
-        /* Estilos do Modal */
+        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
-            display: none; /* Começa escondido */
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 2000;
@@ -91,8 +89,6 @@
             box-shadow: 0 0 30px rgba(0, 123, 255, 0.5);
         }
 
-        .modal-content h2 { color: #0056b3; margin-top: 0; }
-
         .painel-revisao {
             background: #f8f9fa;
             padding: 15px;
@@ -106,10 +102,25 @@
             border: 2px dashed #007bff;
         }
 
-        .aviso-modal { font-size: 0.8rem; color: #666; margin-bottom: 20px; }
+        .timer-display {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+
+        .timer-alerta {
+            color: #dc3545;
+            animation: piscar 0.8s infinite;
+        }
+
+        @keyframes piscar {
+            50% { opacity: 0.5; }
+        }
     </style>
 </head>
 <body>
+
     <div id="modal-final" class="modal-overlay">
         <div class="modal-content">
             <h2>🔒 Missão Quase Concluída!</h2>
@@ -117,7 +128,7 @@
             <div class="painel-revisao">
                 <span id="revisao-codigo"></span>
             </div>
-            <p class="aviso-modal">Ao clicar em "Ir para o Cofre", o tempo será registrado e você não poderá voltar.</p>
+            <p style="font-size: 0.8rem; color: #666; margin-bottom: 20px;">Ao clicar em "Ir para o Cofre", o seu tempo será registrado.</p>
             <button onclick="confirmarIrParaCofre()" class="btn btn-blue">Ir para o Cofre</button>
         </div>
     </div>
@@ -149,6 +160,7 @@
     </div>
 
     <script>
+        // Bancos de Dados
         const bancoFacil = [
             { q: "Qual comando mostra algo na tela?", a: ["leia()", "escreva()", "programa", "inicio"], c: "escreva()" },
             { q: "Para guardar um nome usamos o tipo:", a: ["inteiro", "real", "cadeia", "logico"], c: "cadeia" },
@@ -188,37 +200,25 @@
             { q: "O que faz a função 'txt.extrair_subtexto(c, 0, 1)'?", a: ["Apaga o texto", "Pega a primeira letra", "Inverte o texto", "Pega a última letra"], c: "Pega a primeira letra" }
         ];
 
+        // Configurações Iniciais
         const urlParams = new URLSearchParams(window.location.search);
-        const dificuldade = urlParams.get('nivel');
+        const dificuldade = urlParams.get('nivel') || 'facil';
+        const codigoSecreto = "{{ codigo_secreto }}"; 
+        const LIMITE_TOTAL = 3 * 60 * 1000; // 3 MINUTO
 
-        let bancoSelecionado;
-
-        if (dificuldade === 'facil') {
-            bancoSelecionado = bancoFacil;
-        } else if (dificuldade === 'medio') {
-            bancoSelecionado = bancoMedio;
-        } else if (dificuldade === 'dificil') {
-            bancoSelecionado = bancoDificil;
-        } else {
-            bancoSelecionado = bancoFacil;
-        }
-
-        // ✅ AQUI É O ÚNICO CERTO
-        let perguntas = bancoSelecionado
-            .sort(() => Math.random() - 0.5)
-            .slice(0, 5);
-            
-        let indice = 0, acertos = 0, inicio = Date.now();
+        let bancoSelecionado = dificuldade === 'dificil' ? bancoDificil : (dificuldade === 'medio' ? bancoMedio : bancoFacil);
+        let perguntas = bancoSelecionado.sort(() => Math.random() - 0.5).slice(0, 5);
+        
+        let indice = 0, acertos = 0;
         let timerRodando = true; 
         let tempoFinalSalvo = 0; 
-        let podeSair = false; // VARIAVEL CHAVE: Controla se o alerta deve aparecer
-        const codigoSecreto = "{{ codigo_secreto }}"; 
+        let podeSair = false; 
+        const inicio = Date.now();
 
         function mostrar() {
             const p = perguntas[indice];
             document.getElementById('num-questao').innerText = `Questão ${indice + 1} de 5`;
             document.getElementById('texto-pergunta').innerText = p.q;
-
             const container = document.getElementById('container-alternativas');
             container.innerHTML = '';
             
@@ -233,13 +233,11 @@
 
         function validar(escolha, btnClicado) {
             const correta = perguntas[indice].c;
-            const todosOsBotoes = document.querySelectorAll('.btn-alt');
-            todosOsBotoes.forEach(b => b.disabled = true);
+            document.querySelectorAll('.btn-alt').forEach(b => b.disabled = true);
 
             if (escolha === correta) {
                 btnClicado.classList.add('correta');
                 acertos++;
-
                 const slot = document.getElementById(`slot-${indice}`);
                 if (slot) {
                     slot.innerText = codigoSecreto[indice];
@@ -247,7 +245,7 @@
                 }
             } else {
                 btnClicado.classList.add('errada');
-                todosOsBotoes.forEach(b => {
+                document.querySelectorAll('.btn-alt').forEach(b => {
                     if (b.innerText === correta) b.classList.add('correta');
                 });
             }
@@ -265,33 +263,27 @@
         }
 
         function finalizar() {
+            if (!timerRodando) return;
             timerRodando = false; 
             tempoFinalSalvo = Date.now() - inicio;
 
-            const slots = document.querySelectorAll('.slot-digito');
             let codigoColetado = "";
-            slots.forEach(slot => {
+            document.querySelectorAll('.slot-digito').forEach(slot => {
                 codigoColetado += slot.innerText === "?" ? "_" : slot.innerText;
             });
             
-            const revisao = document.getElementById('revisao-codigo');
-            if(revisao) revisao.innerText = codigoColetado;
-
-            const modal = document.getElementById('modal-final');
-            if(modal) modal.style.display = 'flex';
+            document.getElementById('revisao-codigo').innerText = codigoColetado;
+            document.getElementById('modal-final').style.display = 'flex';
         }
 
-        // Dentro do desafio.html
         async function confirmarIrParaCofre() {
             podeSair = true; 
-            const nivelAtual = new URLSearchParams(window.location.search).get('nivel') || 'facil';
-
             const dados = { 
                 nome: localStorage.getItem('usuarioAtual'), 
                 acertos: acertos, 
                 tempo: tempoFinalSalvo, 
                 tempoTexto: formatar(tempoFinalSalvo),
-                nivel: nivelAtual // <--- ENVIE O NÍVEL AQUI
+                nivel: dificuldade
             };
 
             await fetch("{% url 'salvar_resultado' %}", {
@@ -307,29 +299,40 @@
         }
 
         function formatar(ms) {
+            if (ms < 0) ms = 0;
             const m = Math.floor(ms/60000).toString().padStart(2,'0');
             const s = Math.floor((ms%60000)/1000).toString().padStart(2,'0');
             const mil = (ms%1000).toString().padStart(3,'0');
             return `${m}:${s}.${mil}`;
         }
 
-        setInterval(() => {
+        // Lógica do Cronômetro
+        const loopTimer = setInterval(() => {
             if (timerRodando) {
-                document.getElementById('timer').innerText = formatar(Date.now() - inicio);
-            }
-        }, 10);
+                const decorrido = Date.now() - inicio;
 
-        // --- PROTEÇÕES ---
-        window.addEventListener('keydown', function (e) {
-            if (e.which === 116 || (e.ctrlKey && e.which === 82) || e.which === 123) {
-                e.preventDefault();
+                if (decorrido >= LIMITE_TOTAL) {
+                    document.getElementById('timer').innerText = formatar(LIMITE_TOTAL);
+                    document.getElementById('timer').classList.add('timer-alerta');
+                    clearInterval(loopTimer);
+                    finalizar();
+                } else {
+                    document.getElementById('timer').innerText = formatar(decorrido);
+                    if (LIMITE_TOTAL - decorrido < 15000) { // Alerta nos últimos 15s
+                        document.getElementById('timer').classList.add('timer-alerta');
+                    }
+                }
+            } else {
+                clearInterval(loopTimer);
             }
+        }, 50);
+
+        // Bloqueios de segurança
+        window.addEventListener('keydown', e => {
+            if (e.which === 116 || (e.ctrlKey && e.which === 82) || e.which === 123) e.preventDefault();
         });
-
         window.addEventListener('contextmenu', e => e.preventDefault());
-
-        // AJUSTE AQUI: O alerta só aparece se 'podeSair' for falso
-        window.addEventListener('beforeunload', function (e) {
+        window.addEventListener('beforeunload', e => {
             if (!podeSair) {
                 e.preventDefault();
                 e.returnValue = ''; 
