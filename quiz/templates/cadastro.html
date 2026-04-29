@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -8,21 +7,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Desafio Portugol</title>
     <link rel="stylesheet" href="{% static 'style/style.css' %}">
+    <style>
+        /* Estilos do Modal de Alerta */
+        .modal-aviso {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none; /* Escondido por padrão */
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+        }
+
+        .modal-aviso-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 320px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: entradaModal 0.3s ease-out;
+        }
+
+        @keyframes entradaModal {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-aviso-content h3 {
+            color: #d9534f; /* Vermelho para erro */
+            margin-top: 0;
+        }
+
+        .modal-aviso-content p {
+            color: #555;
+            margin: 15px 0;
+            line-height: 1.4;
+        }
+
+        .btn-fechar {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-fechar:hover { background: #0056b3; }
+    </style>
 </head>
 
 <body>
 
     <div class="animacao-fundo" data-img="{% static '../static/img/SimboloS.png' %}"></div>
 
-
+    <div id="modalAviso" class="modal-aviso">
+        <div class="modal-aviso-content">
+            <h3 id="avisoTitulo">Atenção</h3>
+            <p id="avisoTexto">Mensagem de erro aqui.</p>
+            <button class="btn-fechar" onclick="fecharModal()">Entendi</button>
+        </div>
+    </div>
 
     <div class="container">
-
         <section class="tela ativa">
             <h1>Bem-vindo ao desafio do cofre secreto!</h1>
-            <p>Desvende os codigos e descubra o segredo!</p>
+            <p>Desvende os códigos e descubra o segredo!</p>
             <p>Insira seu nome para o ranking:</p>
-            <input type="text" id="input-nome" placeholder="Digite seu nome aqui...">
+            <input type="text" id="input-nome" placeholder="Digite seu nome aqui..." maxlength="20">
             <br>
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn btn-blue" onclick="irParaJogo()">Continuar</button>
@@ -33,16 +88,69 @@
     </div>
 
     <script>
+        // O Django vai transformar a lista de nomes em uma lista de strings no JS
+        const nomesCadastrados = [
+            {% for nome in nomes_cadastrados %}
+                "{{ nome|lower|escapejs }}",
+            {% endfor %}
+        ];
+
+        function abrirModal(titulo, texto) {
+            document.getElementById('avisoTitulo').innerText = titulo;
+            document.getElementById('avisoTexto').innerText = texto;
+            document.getElementById('modalAviso').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalAviso').style.display = 'none';
+        }
+
         function irParaJogo() {
-            const nome = document.getElementById('input-nome').value.trim();
-            if (!nome) return alert("Por favor, digite seu nome!");
-            // Guardamos no localStorage apenas para identificar o jogador durante a sessão
+            const input = document.getElementById('input-nome');
+            const nome = input.value.trim();
+
+            // 1. Validação de campo vazio
+            if (!nome) {
+                abrirModal("Campo Vazio", "Por favor, digite seu nome para continuar!");
+                return;
+            }
+
+            // 2. Validação: Apenas letras e espaços
+            const regexLetras = /^[a-zA-ZÀ-ÿ\s]+$/;
+            if (!regexLetras.test(nome)) {
+                abrirModal("Nome Inválido", "O nome deve conter apenas letras. Números e símbolos não são permitidos.");
+                return;
+            }
+
+            // 3. Validação de Duplicidade (Onde usamos a lista vinda da View)
+            if (nomesCadastrados.includes(nome.toLowerCase())) {
+                abrirModal("Nome em Uso", "Este nome já está cadastrado no ranking. Tente adicionar um sobrenome ou usar outro nome.");
+                return;
+            }
+
+            // Sucesso
             localStorage.setItem('usuarioAtual', nome);
             window.location.href = "{% url 'dificuldade' %}";
+        }
+
+        // Filtro de teclado em tempo real
+        document.getElementById('input-nome').addEventListener('keypress', function(e) {
+            const char = String.fromCharCode(e.which);
+            const regexLetras = /^[a-zA-ZÀ-ÿ\s]+$/;
+            if (!regexLetras.test(char)) {
+                e.preventDefault();
+            }
+        });
+
+        // Fechar modal ao clicar fora do conteúdo
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalAviso');
+            if (event.target == modal) {
+                fecharModal();
+            }
         }
     </script>
 
     <script src="{% static 'scripts/animacaoCad.js' %}"></script>
 </body>
-
 </html>

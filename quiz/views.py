@@ -5,10 +5,17 @@ import json
 import random
 
 def cadastro(request):
+    # Busca todos os nomes cadastrados para evitar duplicidade no front-end
+    # Usamos .values_list para pegar apenas os nomes e facilitar a vida do JS
+    nomes_existentes = Ranking.objects.values_list('nome', flat=True)
+    
     # Sempre que entrar no cadastro, geramos um novo código de 5 dígitos
     codigo_secreto = f"{random.randint(0, 99999):05d}"
     request.session['codigo_secreto'] = codigo_secreto
-    return render(request, 'cadastro.html')
+    
+    return render(request, 'cadastro.html', {
+        'nomes_cadastrados': nomes_existentes
+    })
 
 def dificuldade(request):
     return render(request, 'dificuldade.html')
