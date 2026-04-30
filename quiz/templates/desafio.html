@@ -30,10 +30,10 @@
         <!-- ✅ IMAGEM ADICIONADA -->
         <img
           id="img-pergunta"
-          src="{% static 'img/Facil/1.png' %}"
+          src="{% static 'img/Facil/1.png' %} "
           style="
             width: 100%;
-            max-height: 200px;
+            {% comment %} max-height: 200px; {% endcomment %}
             object-fit: cover;
             margin-bottom: 10px;
           "
@@ -76,61 +76,61 @@
           q: "Qual comando mostra algo na tela?",
           a: ["leia()", "escreva()", "programa", "inicio"],
           c: "escreva()",
-          img: "{% static 'img/Facil/1.webp' %}",
+          img: "{% static 'img/Facil/1.png' %} ?v={{ timestamp }}",
         },
         {
           q: "Para guardar um nome usamos o tipo:",
           a: ["inteiro", "real", "cadeia", "logico"],
           c: "cadeia",
-          img: "{% static 'img/Facil/2.png' %}",
+          img: "{% static 'img/Facil/2.png' %} ?v={{ timestamp }}",
         },
         {
           q: "Como se inicia um comentário de uma linha?",
           a: ["//", "/*", "#", "--"],
           c: "//",
-          img: "{% static 'img/Facil/3.png' %}",
+          img: "{% static 'img/Facil/3.png' %} ?v={{ timestamp }}",
         },
         {
           q: "Qual o símbolo para atribuir valor (receber)?",
           a: ["==", "=", "<-", "+"],
           c: "<-",
-          img: "{% static 'img/Facil/4.png' %}",
+          img: "{% static 'img/Facil/4.png' %} ?v={{ timestamp }}",
         },
         {
           q: "Qual tipo usamos para números com vírgula?",
           a: ["inteiro", "real", "caracter", "vazio"],
           c: "real",
-          img: "{% static 'img/Facil/5.png' %}",
+          img: "{% static 'img/Facil/5.png' %} ?v={{ timestamp }}",
         },
         {
           q: "O comando 'se' serve para:",
           a: ["Repetir", "Finalizar", "Decisão/Condição", "Ler dados"],
           c: "Decisão/Condição",
-          img: "{% static 'img/Facil/6.png' %}",
+          img: "{% static 'img/Facil/6.png' %} ?v={{ timestamp }}",
         },
         {
           q: "Qual o resultado de 10 % 3 (resto)?",
           a: ["3", "1", "0", "10"],
           c: "1",
-          img: "{% static 'img/Facil/7.png' %}",
+          img: "{% static 'img/Facil/7.png' %} ?v={{ timestamp }}",
         },
         {
           q: "Como lemos algo do teclado?",
           a: ["escreva()", "leia()", "teclado()", "pegar()"],
           c: "leia()",
-          img: "{% static 'img/Facil/8.png' %}",
+          img: "{% static 'img/Facil/8.png' %} ?v={{ timestamp }}",
         },
         {
           q: "Um valor Verdadeiro ou Falso é do tipo:",
           a: ["inteiro", "cadeia", "caracter", "logico"],
           c: "logico",
-          img: "{% static 'img/Facil/9.png' %}",
+          img: "{% static 'img/Facil/9.png' %} ?v={{ timestamp }}",
         },
         {
           q: "Qual laço de repetição usamos com contador?",
           a: ["se", "escolha", "para", "pare"],
           c: "para",
-          img: "{% static 'img/Facil/10.png' %}",
+          img: "{% static 'img/Facil/10.png' %} ?v={{ timestamp }}",
         },
       ];
 
