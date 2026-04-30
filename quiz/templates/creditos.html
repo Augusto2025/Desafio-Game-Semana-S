@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Créditos</title>
+    <link rel="stylesheet" href="{% static 'style/creditos.css' %}">
+</head>
+<body>
+
+<div class="creditos-container">
+    <div class="creditos-content">
+
+        <h1>🎬 CRÉDITOS</h1>
+
+        <p>🎮 Projeto</p>
+        <h2>Quiz do Cofre</h2>
+
+        <p>💻 Desenvolvedores</p>
+        <h2>Alcides</h2>
+        <h2>Augusto</h2>
+        <h2>Clariane</h2>
+
+
+        <p>💻 Tecnologias Utilizadas</p>
+        <h2>HTML5</h2>
+        <h2>CSS3</h2>
+        <h2>JavaScript</h2>
+        <h2>Django</h2>
+        <h2>Python</h2>
+
+    </div>
+</div>
+
+<!-- botão voltar -->
+<button class="btn-voltar" onclick="voltar()">⬅ Voltar</button>
+
+<script>
+function voltar() {
+    window.location.href = "{% url 'ranking' %}";
+}
+</script>
+
+</body>
+</html>

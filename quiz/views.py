@@ -25,6 +25,9 @@ def desafio(request):
     codigo = request.session.get('codigo_secreto', '00000')
     return render(request, 'desafio.html', {'codigo_secreto': codigo})
 
+def creditos(request):
+    return render(request, 'creditos.html')
+
 def verificar_cofre(request):
     """ Nova view para validar o código via AJAX ou Form """
     if request.method == 'POST':
