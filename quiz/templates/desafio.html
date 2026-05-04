@@ -1,234 +1,462 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jogo - Desafio Portugol</title>
-    <link rel="stylesheet" href="{% static 'style/style.css' %}">
-    <link rel="stylesheet" href="{% static 'style/Desafio.css' %}">
-</head>
-<body>
-
+    <link rel="stylesheet" href="{% static 'style/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'style/Desafio.css' %}" />
+  </head>
+  <body>
     <div id="modal-final" class="modal-overlay">
-        <div class="modal-content">
-            <h2>🔒 Missão Quase Concluída!</h2>
-            <p>Você coletou os dígitos necessários. Já decorou o código?</p>
-            <div class="painel-revisao">
-                <span id="revisao-codigo"></span>
-            </div>
-            <p style="font-size: 0.8rem; color: #666; margin-bottom: 20px;">Ao clicar em "Ir para o Cofre", o seu tempo será registrado.</p>
-            <button onclick="confirmarIrParaCofre()" class="btn btn-blue">Ir para o Cofre</button>
+      <div class="modal-content">
+        <h2>🔒 Missão Quase Concluída!</h2>
+        <p>Você coletou os dígitos necessários. Já decorou o código?</p>
+        <div class="painel-revisao">
+          <span id="revisao-codigo"></span>
         </div>
+        <p style="font-size: 0.8rem; color: #666; margin-bottom: 20px">
+          Ao clicar em "Ir para o Cofre", o seu tempo será registrado.
+        </p>
+        <button onclick="confirmarIrParaCofre()" class="btn btn-blue">
+          Ir para o Cofre
+        </button>
+      </div>
     </div>
 
     <div class="container">
-        <section class="tela ativa">
-            <div id="timer" class="timer-display">00:00.000</div>
+      <section class="tela ativa">
+        <!-- ✅ IMAGEM ADICIONADA -->
+        <img
+          id="img-pergunta"
+          src="{% static 'img/Facil/1.png' %} "
+          style="
+            width: 100%;
+            {% comment %} max-height: 200px; {% endcomment %}
+            object-fit: cover;
+            margin-bottom: 10px;
+          "
+        />
 
-            <div id="card-k0da" class="card-k0da">
-                <div class="k0da-content">
-                    <p>🔒 Painel de Segurança</p>
-                    <div class="digitos-progress">
-                        <div class="slot-digito" id="slot-0">?</div>
-                        <div class="slot-digito" id="slot-1">?</div>
-                        <div class="slot-digito" id="slot-2">?</div>
-                        <div class="slot-digito" id="slot-3">?</div>
-                        <div class="slot-digito" id="slot-4">?</div>
-                    </div>
-                </div>
-            </div>
+        <div id="timer" class="timer-display">00:00.000</div>
 
-            <div class="pergunta-box">
-                <strong id="num-questao">Questão 1</strong><br>
-                <span id="texto-pergunta">Carregando...</span>
+        <div id="card-k0da" class="card-k0da">
+          <div class="k0da-content">
+            <p>🔒 Painel de Segurança</p>
+            <div class="digitos-progress">
+              <div class="slot-digito" id="slot-0">?</div>
+              <div class="slot-digito" id="slot-1">?</div>
+              <div class="slot-digito" id="slot-2">?</div>
+              <div class="slot-digito" id="slot-3">?</div>
+              <div class="slot-digito" id="slot-4">?</div>
             </div>
-            <div id="container-alternativas"></div>
-            <button id="btn-proxima" class="btn btn-blue" style="display:none; margin-top:20px; width: 100%;" onclick="proxima()">Próxima Pergunta</button>
-        </section>
+          </div>
+        </div>
+
+        <div class="pergunta-box">
+          <strong id="num-questao">Questão 1</strong><br />
+          <span id="texto-pergunta">Carregando...</span>
+        </div>
+        <div id="container-alternativas"></div>
+        <button
+          id="btn-proxima"
+          class="btn btn-blue"
+          style="display: none; margin-top: 20px; width: 100%"
+          onclick="proxima()"
+        >
+          Próxima Pergunta
+        </button>
+      </section>
     </div>
 
     <script>
-        // Bancos de Dados
-        const bancoFacil = [
-            { q: "Qual comando mostra algo na tela?", a: ["leia()", "escreva()", "programa", "inicio"], c: "escreva()" },
-            { q: "Para guardar um nome usamos o tipo:", a: ["inteiro", "real", "cadeia", "logico"], c: "cadeia" },
-            { q: "Como se inicia um comentário de uma linha?", a: ["//", "/*", "#", "--"], c: "//" },
-            { q: "Qual o símbolo para atribuir valor (receber)?", a: ["==", "=", "<-", "+"], c: "<-" },
-            { q: "Qual tipo usamos para números com vírgula?", a: ["inteiro", "real", "caracter", "vazio"], c: "real" },
-            { q: "O comando 'se' serve para:", a: ["Repetir", "Finalizar", "Decisão/Condição", "Ler dados"], c: "Decisão/Condição" },
-            { q: "Qual o resultado de 10 % 3 (resto)?", a: ["3", "1", "0", "10"], c: "1" },
-            { q: "Como lemos algo do teclado?", a: ["escreva()", "leia()", "teclado()", "pegar()"], c: "leia()" },
-            { q: "Um valor Verdadeiro ou Falso é do tipo:", a: ["inteiro", "cadeia", "caracter", "logico"], c: "logico" },
-            { q: "Qual laço de repetição usamos com contador?", a: ["se", "escolha", "para", "pare"], c: "para" }
-        ];
+      const bancoFacil = [
+        {
+          q: "Qual comando mostra algo na tela?",
+          a: ["leia()", "escreva()", "programa", "inicio"],
+          c: "escreva()",
+          img: "{% static 'img/Facil/1.png' %} ?v={{ timestamp }}",
+        },
+        {
+          q: "Para guardar um nome usamos o tipo:",
+          a: ["inteiro", "real", "cadeia", "logico"],
+          c: "cadeia",
+          img: "{% static 'img/Facil/2.png' %} ?v={{ timestamp }}",
+        },
+        {
+          q: "Como se inicia um comentário de uma linha?",
+          a: ["//", "/*", "#", "--"],
+          c: "//",
+          img: "{% static 'img/Facil/3.png' %} ?v={{ timestamp }}",
+        },
+        {
+          q: "Qual o símbolo para atribuir valor (receber)?",
+          a: ["==", "=", "<-", "+"],
+          c: "<-",
+          img: "{% static 'img/Facil/4.png' %} ?v={{ timestamp }}",
+        },
+        {
+          q: "Qual tipo usamos para números com vírgula?",
+          a: ["inteiro", "real", "caracter", "vazio"],
+          c: "real",
+          img: "{% static 'img/Facil/5.png' %} ?v={{ timestamp }}",
+        },
+        {
+          q: "O comando 'se' serve para:",
+          a: ["Repetir", "Finalizar", "Decisão/Condição", "Ler dados"],
+          c: "Decisão/Condição",
+          img: "{% static 'img/Facil/6.png' %} ?v={{ timestamp }}",
+        },
+        {
+          q: "Qual o resultado de 10 % 3 (resto)?",
+          a: ["3", "1", "0", "10"],
+          c: "1",
+          img: "{% static 'img/Facil/7.png' %} ?v={{ timestamp }}",
+        },
+        {
+          q: "Como lemos algo do teclado?",
+          a: ["escreva()", "leia()", "teclado()", "pegar()"],
+          c: "leia()",
+          img: "{% static 'img/Facil/8.png' %} ?v={{ timestamp }}",
+        },
+        {
+          q: "Um valor Verdadeiro ou Falso é do tipo:",
+          a: ["inteiro", "cadeia", "caracter", "logico"],
+          c: "logico",
+          img: "{% static 'img/Facil/9.png' %} ?v={{ timestamp }}",
+        },
+        {
+          q: "Qual laço de repetição usamos com contador?",
+          a: ["se", "escolha", "para", "pare"],
+          c: "para",
+          img: "{% static 'img/Facil/10.png' %} ?v={{ timestamp }}",
+        },
+      ];
 
-        const bancoMedio = [
-            { q: "Qual o operador lógico para 'E' em Portugol?", a: ["&", "e", "and", "&&"], c: "e" },
-            { q: "Em um vetor de tamanho 5, qual o índice do último elemento?", a: ["5", "6", "4", "0"], c: "4" },
-            { q: "Qual o resultado da expressão (5 + 3 * 2)?", a: ["16", "11", "13", "10"], c: "11" },
-            { q: "O laço 'faca...enquanto' garante que o código execute:", a: ["Zero vezes", "No máximo 1 vez", "Pelo menos 1 vez", "Para sempre"], c: "Pelo menos 1 vez" },
-            { q: "Qual comando interrompe um laço imediatamente?", a: ["pare", "parar", "stop", "sair"], c: "pare" },
-            { q: "Como se declara um vetor de inteiros com 3 posições?", a: ["inteiro v[3]", "vetor v(3)", "inteiro v = 3", "v[3]: inteiro"], c: "inteiro v[3]" },
-            { q: "Qual o operador para 'OU' em Portugol?", a: ["||", "ou", "or", "|"], c: "ou" },
-            { q: "O que acontece se não usarmos 'pare' no 'caso' do 'escolha'?", a: ["Erro de sintaxe", "Executa o próximo caso", "O programa trava", "Fecha o programa"], c: "Executa o próximo caso" },
-            { q: "A expressão (10 > 5 e 3 < 1) resulta em:", a: ["verdadeiro", "falso", "erro", "nulo"], c: "falso" },
-            { q: "Qual função da biblioteca 'Util' gera números aleatórios?", a: ["aleatorio()", "sortear()", "random()", "gerar()"], c: "sortear()" }
-        ];
+      const bancoMedio = [
+        {
+          q: "Qual o operador lógico para 'E' em Portugol?",
+          a: ["&", "e", "and", "&&"],
+          c: "e",
+          img: "{% static 'img/Medio/1.png' %}",
+        },
+        {
+          q: "Em um vetor de tamanho 5, qual o índice do último elemento?",
+          a: ["5", "6", "4", "0"],
+          c: "4",
+          img: "{% static 'img/Medio/2.png' %}",
+        },
+        {
+          q: "Qual o resultado da expressão (5 + 3 * 2)?",
+          a: ["16", "11", "13", "10"],
+          c: "11",
+          img: "{% static 'img/Medio/3.png' %}",
+        },
+        {
+          q: "O laço 'faca...enquanto' garante que o código execute:",
+          a: [
+            "Zero vezes",
+            "No máximo 1 vez",
+            "Pelo menos 1 vez",
+            "Para sempre",
+          ],
+          c: "Pelo menos 1 vez",
+          img: "{% static 'img/Medio/4.png' %}",
+        },
+        {
+          q: "Qual comando interrompe um laço imediatamente?",
+          a: ["pare", "parar", "stop", "sair"],
+          c: "pare",
+          img: "{% static 'img/Medio/5.png' %}",
+        },
+        {
+          q: "Como se declara um vetor de inteiros com 3 posições?",
+          a: ["inteiro v[3]", "vetor v(3)", "inteiro v = 3", "v[3]: inteiro"],
+          c: "inteiro v[3]",
+          img: "{% static 'img/Medio/6.png' %}",
+        },
+        {
+          q: "Qual o operador para 'OU' em Portugol?",
+          a: ["||", "ou", "or", "|"],
+          c: "ou",
+          img: "{% static 'img/Medio/7.png' %}",
+        },
+        {
+          q: "O que acontece se não usarmos 'pare' no 'caso' do 'escolha'?",
+          a: [
+            "Erro de sintaxe",
+            "Executa o próximo caso",
+            "O programa trava",
+            "Fecha o programa",
+          ],
+          c: "Executa o próximo caso",
+          img: "{% static 'img/Medio/8.png' %}",
+        },
+        {
+          q: "A expressão (10 > 5 e 3 < 1) resulta em:",
+          a: ["verdadeiro", "falso", "erro", "nulo"],
+          c: "falso",
+          img: "{% static 'img/Medio/9.png' %}",
+        },
+        {
+          q: "Qual função da biblioteca 'Util' gera números aleatórios?",
+          a: ["aleatorio()", "sortear()", "random()", "gerar()"],
+          c: "sortear()",
+          img: "{% static 'img/Medio/10.png' %}",
+        },
+      ];
 
-        const bancoDificil = [
-            { q: "Em uma matriz mat[3][4], o primeiro número (3) refere-se a:", a: ["Colunas", "Linhas", "Elementos", "Páginas"], c: "Linhas" },
-            { q: "Qual o resultado de: nao(5 > 2 ou 3 == 3)?", a: ["verdadeiro", "falso", "erro", "1"], c: "falso" },
-            { q: "Como acessamos a quantidade de caracteres de uma cadeia?", a: ["tam()", "tamanho_texto()", "comp()", "extensao()"], c: "tamanho_texto()" },
-            { q: "Para usar a função 'arredondar', como se importa a biblioteca?", a: ["import Matematica", "inclua biblioteca Matematica", "use Matematica", "load Matematica"], c: "inclua biblioteca Matematica" },
-            { q: "Qual o resultado de 15 / 2 em uma variável inteira?", a: ["7.5", "7", "8", "Erro"], c: "7" },
-            { q: "Qual estrutura é melhor para percorrer uma matriz completa?", a: ["Um laço 'para'", "Dois laços 'para' aninhados", "Um 'se' e um 'para'", "Estrutura 'escolha'"], c: "Dois laços 'para' aninhados" },
-            { q: "O que a função 'u.aguarde(1000)' faz (Util)?", a: ["Soma 1000", "Pausa por 1 segundo", "Pausa por 10 segundos", "Gera o número 1000"], c: "Pausa por 1 segundo" },
-            { q: "Variáveis globais devem ser declaradas:", a: ["Dentro da função inicio", "Fora de qualquer função", "Dentro de um laço", "Ao final do programa"], c: "Fora de qualquer função" },
-            { q: "Qual o operador de negação lógica?", a: ["!", "not", "nao", "~"], c: "nao" },
-            { q: "O que faz a função 'txt.extrair_subtexto(c, 0, 1)'?", a: ["Apaga o texto", "Pega a primeira letra", "Inverte o texto", "Pega a última letra"], c: "Pega a primeira letra" }
-        ];
+      const bancoDificil = [
+        {
+          q: "Em uma matriz mat[3][4], o primeiro número (3) refere-se a:",
+          a: ["Colunas", "Linhas", "Elementos", "Páginas"],
+          c: "Linhas",
+          img: "{% static 'img/Dificil/1.png' %}",
+        },
+        {
+          q: "Qual o resultado de: nao(5 > 2 ou 3 == 3)?",
+          a: ["verdadeiro", "falso", "erro", "1"],
+          c: "falso",
+          img: "{% static 'img/Dificil/2.png' %}",
+        },
+        {
+          q: "Como acessamos a quantidade de caracteres de uma cadeia?",
+          a: ["tam()", "tamanho_texto()", "comp()", "extensao()"],
+          c: "tamanho_texto()",
+          img: "{% static 'img/Dificil/3.png' %}",
+        },
+        {
+          q: "Para usar a função 'arredondar', como se importa a biblioteca?",
+          a: [
+            "import Matematica",
+            "inclua biblioteca Matematica",
+            "use Matematica",
+            "load Matematica",
+          ],
+          c: "inclua biblioteca Matematica",
+          img: "{% static 'img/Dificil/4.png' %}",
+        },
+        {
+          q: "Qual o resultado de 15 / 2 em uma variável inteira?",
+          a: ["7.5", "7", "8", "Erro"],
+          c: "7",
+          img: "{% static 'img/Dificil/5.png' %}",
+        },
+        {
+          q: "Qual estrutura é melhor para percorrer uma matriz completa?",
+          a: [
+            "Um laço 'para'",
+            "Dois laços 'para' aninhados",
+            "Um 'se' e um 'para'",
+            "Estrutura 'escolha'",
+          ],
+          c: "Dois laços 'para' aninhados",
+          img: "{% static 'img/Dificil/6.png' %}",
+        },
+        {
+          q: "O que a função 'u.aguarde(1000)' faz (Util)?",
+          a: [
+            "Soma 1000",
+            "Pausa por 1 segundo",
+            "Pausa por 10 segundos",
+            "Gera o número 1000",
+          ],
+          c: "Pausa por 1 segundo",
+          img: "{% static 'img/Dificil/7.png' %}",
+        },
+        {
+          q: "Variáveis globais devem ser declaradas:",
+          a: [
+            "Dentro da função inicio",
+            "Fora de qualquer função",
+            "Dentro de um laço",
+            "Ao final do programa",
+          ],
+          c: "Fora de qualquer função",
+          img: "{% static 'img/Dificil/8.png' %}",
+        },
+        {
+          q: "Qual o operador de negação lógica?",
+          a: ["!", "not", "nao", "~"],
+          c: "nao",
+          img: "{% static 'img/Dificil/9.png' %}",
+        },
+        {
+          q: "O que faz a função 'txt.extrair_subtexto(c, 0, 1)'?",
+          a: [
+            "Apaga o texto",
+            "Pega a primeira letra",
+            "Inverte o texto",
+            "Pega a última letra",
+          ],
+          c: "Pega a primeira letra",
+          img: "{% static 'img/Dificil/10.png' %}",
+        },
+      ];
 
-        // Configurações Iniciais
-        const urlParams = new URLSearchParams(window.location.search);
-        const dificuldade = urlParams.get('nivel') || 'facil';
-        const codigoSecreto = "{{ codigo_secreto }}"; 
-        const LIMITE_TOTAL = 3 * 60 * 1000; // 3 MINUTO
+      // ✅ IMAGENS ADICIONADAS
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const dificuldade = urlParams.get("nivel") || "facil";
+      const codigoSecreto = "{{ codigo_secreto }}";
+      const LIMITE_TOTAL = 3 * 60 * 1000;
 
-        let bancoSelecionado = dificuldade === 'dificil' ? bancoDificil : (dificuldade === 'medio' ? bancoMedio : bancoFacil);
-        let perguntas = bancoSelecionado.sort(() => Math.random() - 0.5).slice(0, 5);
-        
-        let indice = 0, acertos = 0;
-        let timerRodando = true; 
-        let tempoFinalSalvo = 0; 
-        let podeSair = false; 
-        const inicio = Date.now();
+      let bancoSelecionado =
+        dificuldade === "dificil"
+          ? bancoDificil
+          : dificuldade === "medio"
+            ? bancoMedio
+            : bancoFacil;
+      let perguntas = bancoSelecionado
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 5);
 
-        function mostrar() {
-            const p = perguntas[indice];
-            document.getElementById('num-questao').innerText = `Questão ${indice + 1} de 5`;
-            document.getElementById('texto-pergunta').innerText = p.q;
-            const container = document.getElementById('container-alternativas');
-            container.innerHTML = '';
-            
-            [...p.a].sort(() => Math.random() - 0.5).forEach(txt => {
-                const btn = document.createElement('button');
-                btn.className = 'btn btn-alt';
-                btn.innerText = txt;
-                btn.onclick = () => validar(txt, btn);
-                container.appendChild(btn);
-            });
+      let indice = 0,
+        acertos = 0;
+      let timerRodando = true;
+      let tempoFinalSalvo = 0;
+      let podeSair = false;
+      const inicio = Date.now();
+
+      function mostrar() {
+        const p = perguntas[indice];
+
+        // ✅ TROCA A IMAGEM
+        document.getElementById("img-pergunta").src = p.img;
+
+        document.getElementById("num-questao").innerText =
+          `Questão ${indice + 1} de 5`;
+        document.getElementById("texto-pergunta").innerText = p.q;
+
+        const container = document.getElementById("container-alternativas");
+        container.innerHTML = "";
+
+        [...p.a]
+          .sort(() => Math.random() - 0.5)
+          .forEach((txt) => {
+            const btn = document.createElement("button");
+            btn.className = "btn btn-alt";
+            btn.innerText = txt;
+            btn.onclick = () => validar(txt, btn);
+            container.appendChild(btn);
+          });
+      }
+
+      function validar(escolha, btnClicado) {
+        const correta = perguntas[indice].c;
+        document
+          .querySelectorAll(".btn-alt")
+          .forEach((b) => (b.disabled = true));
+
+        if (escolha === correta) {
+          btnClicado.classList.add("correta");
+          acertos++;
+          const slot = document.getElementById(`slot-${indice}`);
+          if (slot) {
+            slot.innerText = codigoSecreto[indice];
+            slot.classList.add("revelado");
+          }
+        } else {
+          btnClicado.classList.add("errada");
+          document.querySelectorAll(".btn-alt").forEach((b) => {
+            if (b.innerText === correta) b.classList.add("correta");
+          });
         }
+        document.getElementById("btn-proxima").style.display = "block";
+      }
 
-        function validar(escolha, btnClicado) {
-            const correta = perguntas[indice].c;
-            document.querySelectorAll('.btn-alt').forEach(b => b.disabled = true);
-
-            if (escolha === correta) {
-                btnClicado.classList.add('correta');
-                acertos++;
-                const slot = document.getElementById(`slot-${indice}`);
-                if (slot) {
-                    slot.innerText = codigoSecreto[indice];
-                    slot.classList.add('revelado');
-                }
-            } else {
-                btnClicado.classList.add('errada');
-                document.querySelectorAll('.btn-alt').forEach(b => {
-                    if (b.innerText === correta) b.classList.add('correta');
-                });
-            }
-            document.getElementById('btn-proxima').style.display = 'block';
+      function proxima() {
+        indice++;
+        if (indice < 5) {
+          document.getElementById("btn-proxima").style.display = "none";
+          mostrar();
+        } else {
+          finalizar();
         }
+      }
 
-        function proxima() {
-            indice++;
-            if(indice < 5) {
-                document.getElementById('btn-proxima').style.display = 'none';
-                mostrar();
-            } else {
-                finalizar();
-            }
-        }
+      function finalizar() {
+        if (!timerRodando) return;
+        timerRodando = false;
+        tempoFinalSalvo = Date.now() - inicio;
 
-        function finalizar() {
-            if (!timerRodando) return;
-            timerRodando = false; 
-            tempoFinalSalvo = Date.now() - inicio;
-
-            let codigoColetado = "";
-            document.querySelectorAll('.slot-digito').forEach(slot => {
-                codigoColetado += slot.innerText === "?" ? "_" : slot.innerText;
-            });
-            
-            document.getElementById('revisao-codigo').innerText = codigoColetado;
-            document.getElementById('modal-final').style.display = 'flex';
-        }
-
-        async function confirmarIrParaCofre() {
-            podeSair = true; 
-            const dados = { 
-                nome: localStorage.getItem('usuarioAtual'), 
-                acertos: acertos, 
-                tempo: tempoFinalSalvo, 
-                tempoTexto: formatar(tempoFinalSalvo),
-                nivel: dificuldade
-            };
-
-            await fetch("{% url 'salvar_resultado' %}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify(dados)
-            });
-
-            window.location.href = "{% url 'desbloquear_cofre' %}";
-        }
-
-        function formatar(ms) {
-            if (ms < 0) ms = 0;
-            const m = Math.floor(ms/60000).toString().padStart(2,'0');
-            const s = Math.floor((ms%60000)/1000).toString().padStart(2,'0');
-            const mil = (ms%1000).toString().padStart(3,'0');
-            return `${m}:${s}.${mil}`;
-        }
-
-        // Lógica do Cronômetro
-        const loopTimer = setInterval(() => {
-            if (timerRodando) {
-                const decorrido = Date.now() - inicio;
-
-                if (decorrido >= LIMITE_TOTAL) {
-                    document.getElementById('timer').innerText = formatar(LIMITE_TOTAL);
-                    document.getElementById('timer').classList.add('timer-alerta');
-                    clearInterval(loopTimer);
-                    finalizar();
-                } else {
-                    document.getElementById('timer').innerText = formatar(decorrido);
-                    if (LIMITE_TOTAL - decorrido < 15000) { // Alerta nos últimos 15s
-                        document.getElementById('timer').classList.add('timer-alerta');
-                    }
-                }
-            } else {
-                clearInterval(loopTimer);
-            }
-        }, 50);
-
-        // Bloqueios de segurança
-        window.addEventListener('keydown', e => {
-            if (e.which === 116 || (e.ctrlKey && e.which === 82) || e.which === 123) e.preventDefault();
+        let codigoColetado = "";
+        document.querySelectorAll(".slot-digito").forEach((slot) => {
+          codigoColetado += slot.innerText === "?" ? "_" : slot.innerText;
         });
-        window.addEventListener('contextmenu', e => e.preventDefault());
-        window.addEventListener('beforeunload', e => {
-            if (!podeSair) {
-                e.preventDefault();
-                e.returnValue = ''; 
-            }
+
+        document.getElementById("revisao-codigo").innerText = codigoColetado;
+        document.getElementById("modal-final").style.display = "flex";
+      }
+
+      async function confirmarIrParaCofre() {
+        podeSair = true;
+        const dados = {
+          nome: localStorage.getItem("usuarioAtual"),
+          acertos: acertos,
+          tempo: tempoFinalSalvo,
+          tempoTexto: formatar(tempoFinalSalvo),
+          nivel: dificuldade,
+        };
+
+        await fetch("{% url 'salvar_resultado' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: JSON.stringify(dados),
         });
 
-        mostrar();
+        window.location.href = "{% url 'desbloquear_cofre' %}";
+      }
+
+      function formatar(ms) {
+        if (ms < 0) ms = 0;
+        const m = Math.floor(ms / 60000)
+          .toString()
+          .padStart(2, "0");
+        const s = Math.floor((ms % 60000) / 1000)
+          .toString()
+          .padStart(2, "0");
+        const mil = (ms % 1000).toString().padStart(3, "0");
+        return `${m}:${s}.${mil}`;
+      }
+
+      const loopTimer = setInterval(() => {
+        if (timerRodando) {
+          const decorrido = Date.now() - inicio;
+
+          if (decorrido >= LIMITE_TOTAL) {
+            document.getElementById("timer").innerText = formatar(LIMITE_TOTAL);
+            document.getElementById("timer").classList.add("timer-alerta");
+            clearInterval(loopTimer);
+            finalizar();
+          } else {
+            document.getElementById("timer").innerText = formatar(decorrido);
+            if (LIMITE_TOTAL - decorrido < 15000) {
+              document.getElementById("timer").classList.add("timer-alerta");
+            }
+          }
+        } else {
+          clearInterval(loopTimer);
+        }
+      }, 50);
+
+      {% comment %} window.addEventListener("keydown", (e) => {
+        if (e.which === 116 || (e.ctrlKey && e.which === 82) || e.which === 123)
+          e.preventDefault();
+      }); {% endcomment %}
+      window.addEventListener("contextmenu", (e) => e.preventDefault());
+      window.addEventListener("beforeunload", (e) => {
+        if (!podeSair) {
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      });
+
+      mostrar();
     </script>
-</body>
+  </body>
 </html>
