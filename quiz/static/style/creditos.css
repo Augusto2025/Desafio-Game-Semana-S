@@ -2,30 +2,52 @@ body {
     margin: 0;
     background: black;
     overflow: hidden;
-    font-family: Arial, sans-serif;
     color: white;
+    font-family: Arial, sans-serif;
 }
+
 
 /* CONTAINER */
+
 .creditos-container {
-    position: absolute;
+    position: relative;
     width: 100%;
     height: 100vh;
-    overflow: hidden;
 }
 
-/* TEXTO SUBINDO */
+
+/* CRÉDITOS SUBINDO */
+
 .creditos-content {
     position: absolute;
+    bottom: -100%;
     width: 100%;
     text-align: center;
-    bottom: -100%;
-    
-    animation: subirCreditos 20s linear forwards;
+    animation: subir 15s linear forwards;
 }
 
-/* ANIMAÇÃO */
-@keyframes subirCreditos {
+
+/* TEXTOS */
+
+.creditos-content h1 {
+    font-size: 3rem;
+    margin-bottom: 30px;
+}
+
+.creditos-content p {
+    font-size: 1.2rem;
+    margin-top: 30px;
+    color: #aaa;
+}
+
+.creditos-content h2 {
+    margin: 10px 0;
+}
+
+
+/* ANIMAÇÃO SUBIR */
+
+@keyframes subir {
     from {
         bottom: -100%;
     }
@@ -34,40 +56,93 @@ body {
     }
 }
 
-h1 {
-    font-size: 3rem;
-    margin-bottom: 50px;
-    color: #2ecc71;
+
+/* MENSAGEM FINAL */
+
+.final-msg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    text-align: center;
+    animation: aparecer 1.5s ease forwards;
+    animation-delay: 15s;
 }
 
-h2 {
-    margin-bottom: 40px;
+.final-msg h1 {
+    font-size: 40px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px #00f2fe, 0 0 40px #00f2fe;
+    animation: pulsar 1.5s infinite;
 }
 
-p {
-    color: #aaa;
-    margin: 10px 0;
-}
 
 /* BOTÃO */
-.btn-voltar {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
 
+.final-msg button {
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
-
-    background: #2ecc71;
-    color: white;
+    background: #00f2fe;
+    color: black;
     font-weight: bold;
     cursor: pointer;
-
+    animation: pulsar 1.5s infinite;
     transition: 0.3s;
 }
 
-.btn-voltar:hover {
-    background: #27ae60;
+.final-msg button:hover {
     transform: scale(1.1);
+    background: #4facfe;
+}
+
+
+/* ANIMAÇÃO FINAL */
+
+@keyframes aparecer {
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes pulsar {
+    0% {
+        transform: scale(1);
+        text-shadow: 0 0 20px #00f2fe, 0 0 40px #00f2fe;
+    }
+    50% {
+        transform: scale(1.1);
+        text-shadow: 0 0 30px #00f2fe, 0 0 60px #00f2fe;
+    }
+    100% {
+        transform: scale(1);
+        text-shadow: 0 0 20px #00f2fe, 0 0 40px #00f2fe;
+    }
+}
+
+.tech-list h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+
+/* tamanho dos ícones */
+
+.tech-list i {
+    font-size: 30px;
+}
+
+
+/* efeito hover */
+
+.tech-list h2:hover {
+    transform: scale(1.1);
+    transition: 0.3s;
+    transition: 0.3s;
+    transition: 0.3s;
 }
