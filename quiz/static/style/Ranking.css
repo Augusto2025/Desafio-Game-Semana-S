@@ -99,14 +99,14 @@ h1 {
 }
 
 .second {
-    height: 70px;
+    height: 90px;
     background: #bdc3c7;
     order: 1;
     border: 2px solid #a6acaf;
 }
 
 .third {
-    height: 50px;
+    height: 80px;
     background: #cd7f32;
     order: 3;
     border: 2px solid #a0522d;

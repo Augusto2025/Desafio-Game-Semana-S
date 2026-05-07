@@ -8,28 +8,72 @@
     <link rel="stylesheet" href="{% static 'style/style.css' %}">
     <link rel="stylesheet" href="{% static 'style/Ranking.css' %}">
     <style>
-      /* Estilo de destaque para o jogador atual no pódio */
-      .meu-podio .step-name {
-          color: #ffcc00 !important; /* Amarelo ouro */
-          font-weight: 900 !important;
-          text-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
-          transform: scale(1.1);
-      }
-      
-      .meu-podio .step-base {
-          border: 3px solid #ffcc00 !important;
-          box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
-          animation: pulse-gold 2s infinite;
-      }
+        /* Estilo de destaque para o jogador atual no pódio */
+        .meu-podio .step-name {
+            color: #ffcc00 !important; /* Amarelo ouro */
+            font-weight: 900 !important;
+            text-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
+            transform: scale(1.1);
+        }
+        
+        .meu-podio .step-base {
+            border: 3px solid #ffcc00 !important;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+            animation: pulse-gold 2s infinite;
+        }
 
-      @keyframes pulse-gold {
-          0% { box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); }
-          50% { box-shadow: 0 0 25px rgba(255, 204, 0, 0.7); }
-          100% { box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); }
-      }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(255, 204, 0, 0.7); }
+            100% { box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); }
+        }
+
+        /* Estilo do Modal de Resultado */
+        .modal-resultado {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: #ffffff;
+            border: 2px solid #ffcc00;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            color: #0b1d3a;
+            max-width: 400px;
+            box-shadow: 0 0 20px #ffcc00;
+        }
+        .modal-content h2 { color: #ffcc00; margin-bottom: 20px; }
+        .info-res { font-size: 1.2rem; margin: 10px 0; border-bottom: 1px solid #333; padding: 5px; }
+        .btn-fechar {
+            background: #ffcc00; border: none; padding: 10px 20px;
+            border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 20px;
+        }
+
+        /* Ajuste no pódio para caber o tempo */
+        .step-time {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.8);
+            margin-top: 2px;
+        }
     </style>
   </head>
   <body>
+    <div id="modalResultado" class="modal-resultado">
+        <div class="modal-content">
+            <h2>🎮 Desempenho Final</h2>
+            <div class="info-res">👤 Nome: <span id="res-nome"></span></div>
+            <div class="info-res">🏆 Posição: <span id="res-pos"></span></div>
+            <div class="info-res">🎯 Acertos: <span id="res-pts"></span></div>
+            <div class="info-res">⏱️ Tempo: <span id="res-tempo"></span></div>
+            <button class="btn-fechar" onclick="fecharModalResultado()">Ver Rankings</button>
+        </div>
+    </div>
+
     <div class="animacao-fundo" data-img="{% static '../static/img/SimboloS.png' %}"></div>
 
     <div class="container" style="max-width: 1500px;">
@@ -93,70 +137,103 @@
     </div>
 
     <script>
-      const usuarioAtual = localStorage.getItem("usuarioAtual");
+        const usuarioAtual = localStorage.getItem("usuarioAtual");
 
-      async function atualizarRanking() {
-        try {
-            const response = await fetch("{% url 'api_ranking' %}");
-            const dados = await response.json();
+        async function atualizarRanking() {
+            try {
+                const response = await fetch("{% url 'api_ranking' %}");
+                const dados = await response.json();
 
-            processarRanking("facil", dados.facil);
-            processarRanking("medio", dados.medio);
-            processarRanking("dificil", dados.dificil);
-        } catch (e) { console.error(e); }
-      }
+                processarRanking("facil", dados.facil);
+                processarRanking("medio", dados.medio);
+                processarRanking("dificil", dados.dificil);
 
-      function processarRanking(nivel, lista) {
-        const podiumDiv = document.getElementById(`podium-${nivel}`);
-        const corpoTabela = document.getElementById(`ranking-${nivel}`);
-        
-        if (!lista || lista.length === 0) {
-            podiumDiv.innerHTML = "<p style='color:#999; margin-top:50px;'>Aguardando campeões...</p>";
-            corpoTabela.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">Nenhum dado</td></tr>';
-            return;
+                // Verifica se deve mostrar o modal de resultado (apenas na primeira carga)
+                verificarNovoResultado(dados);
+            } catch (e) { console.error(e); }
         }
 
-        // Renderizar Pódio (Top 3)
-        const top3 = lista.slice(0, 3);
-        const medals = ["🥇", "🥈", "🥉"];
-        const classes = ["first", "second", "third"];
-        let podiumHTML = "";
-
-        // Ordem visual: 2º, 1º, 3º
-        [1, 0, 2].forEach(i => {
-            const p = top3[i];
-            if (p) {
-                // Verifica se é o jogador atual
-                const ehEu = p.nome === usuarioAtual;
-                
-                podiumHTML += `
-                    <div class="podium-step ${ehEu ? 'meu-podio' : ''}">
-                        <div class="step-name" title="${p.nome}">${ehEu ? "⭐ Você" : p.nome}</div>
-                        <div class="step-base ${classes[i]}">
-                            <span>${medals[i]}</span>
-                            <span>${p.acertos}/5</span>
-                        </div>
-                    </div>`;
-            } else {
-                podiumHTML += `<div class="podium-step"><div style="height:30px"></div><div class="step-base" style="background:#eee; height:30px; order:${i===0?2:(i===1?1:3)}"></div></div>`;
+        function processarRanking(nivel, lista) {
+            const podiumDiv = document.getElementById(`podium-${nivel}`);
+            const corpoTabela = document.getElementById(`ranking-${nivel}`);
+            
+            if (!lista || lista.length === 0) {
+                podiumDiv.innerHTML = "<p style='color:#999; margin-top:50px;'>Aguardando campeões...</p>";
+                corpoTabela.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">Nenhum dado</td></tr>';
+                return;
             }
-        });
-        podiumDiv.innerHTML = podiumHTML;
 
-        // Renderizar Tabela (do 4º em diante)
-        const restante = lista.slice(3);
-        corpoTabela.innerHTML = restante.map((item, i) => `
-            <tr class="${item.nome === usuarioAtual ? "minha-posicao" : ""}">
-                <td style="font-weight:bold">${i + 4}º</td>
-                <td>${item.nome}</td>
-                <td>${item.acertos}/5</td>
-                <td style="color:#7f8c8d; font-size:0.85rem">${item.tempo_texto}</td>
-            </tr>
-        `).join("");
-      }
+            // Renderizar Pódio (Top 3)
+            const top3 = lista.slice(0, 3);
+            const medals = ["🥇", "🥈", "🥉"];
+            const classes = ["first", "second", "third"];
+            let podiumHTML = "";
 
-      atualizarRanking();
-      setInterval(atualizarRanking, 5000); 
+            [1, 0, 2].forEach(i => {
+                const p = top3[i];
+                if (p) {
+                    const ehEu = p.nome === usuarioAtual;
+                    podiumHTML += `
+                        <div class="podium-step ${ehEu ? 'meu-podio' : ''}">
+                            <div class="step-name" title="${p.nome}">${ehEu ? "⭐ Você" : p.nome}</div>
+                            <div class="step-base ${classes[i]}">
+                                <span>${medals[i]}</span>
+                                <span>${p.acertos}/5</span>
+                                <div class="step-time">⏱️ ${p.tempo_texto}</div>
+                            </div>
+                        </div>`;
+                } else {
+                    podiumHTML += `<div class="podium-step"><div style="height:30px"></div><div class="step-base" style="background:#eee; height:30px;"></div></div>`;
+                }
+            });
+            podiumDiv.innerHTML = podiumHTML;
+
+            // Renderizar Tabela
+            const restante = lista.slice(3);
+            corpoTabela.innerHTML = restante.map((item, i) => `
+                <tr class="${item.nome === usuarioAtual ? "minha-posicao" : ""}">
+                    <td style="font-weight:bold">${i + 4}º</td>
+                    <td>${item.nome}</td>
+                    <td>${item.acertos}/5</td>
+                    <td style="color:#7f8c8d; font-size:0.85rem">${item.tempo_texto}</td>
+                </tr>
+            `).join("");
+        }
+
+        // Função para mostrar o modal caso o usuário tenha acabado de jogar
+        let modalMostrado = false;
+        function verificarNovoResultado(dados) {
+            if (modalMostrado) return;
+
+            // Procuramos o usuário em todos os níveis
+            let meuRegistro = null;
+            let rankGeral = "";
+            
+            ["facil", "medio", "dificil"].forEach(nivel => {
+                const index = dados[nivel].findIndex(p => p.nome === usuarioAtual);
+                if (index !== -1 && !meuRegistro) {
+                    meuRegistro = dados[nivel][index];
+                    rankGeral = `${index + 1}º no ${nivel.toUpperCase()}`;
+                }
+            });
+
+            if (meuRegistro) {
+                document.getElementById("res-nome").innerText = meuRegistro.nome;
+                document.getElementById("res-pos").innerText = rankGeral;
+                document.getElementById("res-pts").innerText = meuRegistro.acertos + "/5";
+                document.getElementById("res-tempo").innerText = meuRegistro.tempo_texto;
+                
+                document.getElementById("modalResultado").style.display = "flex";
+                modalMostrado = true;
+            }
+        }
+
+        function fecharModalResultado() {
+            document.getElementById("modalResultado").style.display = "none";
+        }
+
+        atualizarRanking();
+        setInterval(atualizarRanking, 10000); 
     </script>
     <script src="{% static 'scripts/animacaoCad.js' %}"></script>
   </body>

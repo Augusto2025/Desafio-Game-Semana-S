@@ -301,7 +301,7 @@
       const urlParams = new URLSearchParams(window.location.search);
       const dificuldade = urlParams.get("nivel") || "facil";
       const codigoSecreto = "{{ codigo_secreto }}";
-      const LIMITE_TOTAL = 10 * 60 * 1000;
+      const LIMITE_TOTAL = 15 * 60 * 1000;
 
       let bancoSelecionado =
         dificuldade === "dificil"
