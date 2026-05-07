@@ -68,6 +68,7 @@
             <h2>🎮 Desempenho Final</h2>
             <div class="info-res">👤 Nome: <span id="res-nome"></span></div>
             <div class="info-res">🏆 Posição: <span id="res-pos"></span></div>
+            <div class="info-res"> Nível: <span id="res-nivel"></span></div>
             <div class="info-res">🎯 Acertos: <span id="res-pts"></span></div>
             <div class="info-res">⏱️ Tempo: <span id="res-tempo"></span></div>
             <button class="btn-fechar" onclick="fecharModalResultado()">Ver Rankings</button>
@@ -208,12 +209,14 @@
             // Procuramos o usuário em todos os níveis
             let meuRegistro = null;
             let rankGeral = "";
+            let nivelEncontrado = "";
             
             ["facil", "medio", "dificil"].forEach(nivel => {
                 const index = dados[nivel].findIndex(p => p.nome === usuarioAtual);
                 if (index !== -1 && !meuRegistro) {
                     meuRegistro = dados[nivel][index];
-                    rankGeral = `${index + 1}º no ${nivel.toUpperCase()}`;
+                    rankGeral = `${index + 1}º`;
+                    nivelEncontrado = nivel.toUpperCase();
                 }
             });
 
@@ -222,7 +225,7 @@
                 document.getElementById("res-pos").innerText = rankGeral;
                 document.getElementById("res-pts").innerText = meuRegistro.acertos + "/5";
                 document.getElementById("res-tempo").innerText = meuRegistro.tempo_texto;
-                
+                document.getElementById("res-nivel").innerText = nivelEncontrado;
                 document.getElementById("modalResultado").style.display = "flex";
                 modalMostrado = true;
             }
