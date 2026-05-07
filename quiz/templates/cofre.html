@@ -15,6 +15,10 @@
 
         <div class="interface-digital">
             <div class="visor-lcd">
+                <div id="tentativas-cont" style="color: #ff3333; font-size: 1.1rem; margin-bottom: 5px;">
+                    Tentativas restantes: <span id="num-tentativas">7</span>
+                </div>
+                
                 <div class="inputs-container">
                     <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
                     <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
@@ -42,6 +46,9 @@
         const inputs = document.querySelectorAll('.digito-input');
         const volante = document.getElementById('volante');
         const msg = document.getElementById('msg');
+        const spanTentativas = document.getElementById('num-tentativas');
+
+        let tentativasRestantes = 7; // Define o máximo de tentativas
 
         inputs[0].focus();
 
@@ -55,9 +62,14 @@
         });
 
         async function verificar() {
+            if (tentativasRestantes <= 0) return;
+
             const tentativa = Array.from(inputs).map(i => i.value).join('');
             
-            if(tentativa.length < 5) return;
+            if(tentativa.length < 5) {
+                msg.innerText = "DIGITE 5 NÚMEROS";
+                return;
+            }
 
             const res = await fetch("{% url 'desbloquear_cofre' %}", {
                 method: 'POST',
@@ -72,14 +84,38 @@
                 msg.className = "status-msg sucesso-txt";
                 volante.classList.add('girar'); 
                 
+                // Desativa os inputs para evitar digitar após ganhar
+                inputs.forEach(i => i.disabled = true);
+
                 setTimeout(() => {
                     window.location.href = "{% url 'premio' %}";
                 }, 3000);
             } else {
-                msg.innerText = "CÓDIGO INVÁLIDO";
-                msg.className = "status-msg erro-txt";
-                inputs.forEach(i => i.value = '');
-                inputs[0].focus();
+                // ERROU O CÓDIGO
+                tentativasRestantes--;
+                spanTentativas.innerText = tentativasRestantes;
+
+                if (tentativasRestantes > 0) {
+                    msg.innerText = "CÓDIGO INVÁLIDO";
+                    msg.className = "status-msg erro-txt";
+                    
+                    // Limpa os campos para nova tentativa
+                    inputs.forEach(i => i.value = '');
+                    inputs[0].focus();
+                    
+                    // Pisca o LCD em vermelho
+                    document.querySelector('.visor-lcd').style.borderColor = "#ff0000";
+                    setTimeout(() => {
+                        document.querySelector('.visor-lcd').style.borderColor = "#00ff00";
+                    }, 500);
+
+                } else {
+                    // FIM DAS TENTATIVAS
+                    msg.innerText = "SISTEMA BLOQUEADO";
+                    msg.className = "status-msg erro-txt";
+                    inputs.forEach(i => i.disabled = true);
+                    window.location.href = "{% url 'ranking' %}";
+                }
             }
         }
     </script>
