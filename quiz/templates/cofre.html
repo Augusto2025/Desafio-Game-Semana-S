@@ -3,6 +3,9 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Cofre Digital - Segurança Máxima</title>
     <link rel="stylesheet" href="{% static 'style/Cofre.css' %}">
     
@@ -20,18 +23,33 @@
                 </div>
                 
                 <div class="inputs-container">
-                    <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
-                    <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
-                    <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
-                    <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
-                    <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
+                    <div class="coluna-input">
+                        <span class="seta-dica" id="dica-0"></span>
+                        <input type="number" class="digito-input" maxlength="1" inputmode="numeric">
+                    </div>
+                    <div class="coluna-input">
+                        <span class="seta-dica" id="dica-1"></span>
+                        <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
+                    </div>
+                    <div class="coluna-input">
+                        <span class="seta-dica" id="dica-2"></span>
+                        <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
+                    </div>
+                    <div class="coluna-input">
+                        <span class="seta-dica" id="dica-3"></span>
+                        <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
+                    </div>
+                    <div class="coluna-input">
+                        <span class="seta-dica" id="dica-4"></span>
+                        <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
+                    </div>
                 </div>
                 <div id="msg" class="status-msg">Insira o Código</div>
             </div>
             
             <div style="display: flex; gap: 20px; margin-top: 30px;">
                 <button id="btn-enviar" onclick="verificar()" class="btn-abrir">Enviar Código</button>
-                <button onclick="window.location.href='{% url 'ranking' %}'" class="btn-sair">Finalizar sem o Segredo</button>
+                <button id="btn-enviar" onclick="window.location.href='{% url 'ranking' %}'" class="btn-sair">Finalizar sem o Segredo</button>
             </div>
         </div>
 
@@ -55,53 +73,55 @@
         // --- FUNÇÃO DE PUNIÇÃO (AUTODESTRUIÇÃO) ---
         function travarSistema(motivo) {
             if (podeSair) return;
-            
             podeSair = true;
-            tentativasRestantes = 0;
-            spanTentativas.innerText = "0";
             
-            // Esconde o botão imediatamente
-            if(btnEnviar) btnEnviar.style.display = "none";
+            // Esconde tudo e bloqueia
+            document.body.style.display = "none"; 
             
-            msg.innerText = "VIOLAÇÃO DETECTADA";
-            msg.className = "status-msg erro-txt";
+            // O replace impede que ele consiga "voltar" para o cofre depois
+            window.location.replace("{% url 'ranking' %}");
             
-            alert("⚠️ SEGURANÇA MÁXIMA: " + motivo + "\nO cofre foi bloqueado e você será removido.");
-            window.location.href = "{% url 'ranking' %}";
+            alert("⚠️ VIOLAÇÃO DE SEGURANÇA: " + motivo + "\nSessão encerrada.");
         }
 
         // --- BLOQUEIOS DE TECLADO E NAVEGAÇÃO ---
+        // 1. Bloqueia o botão 'Voltar' do navegador (físico ou do mouse)
+        // Criamos um loop no histórico. Se ele tentar voltar, ele cai no mesmo lugar e dispara o erro.
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.pushState(null, null, location.href);
+            travarSistema("Botão voltar detectado!");
+        };
 
-        // 1. Bloqueia F5, Ctrl+R, F12 e Inspecionar
+        // 2. O evento que detecta quando a página está sendo descarregada (Refresh/Fechar aba)
+        window.onbeforeunload = function (e) {
+            if (!podeSair) {
+                // A maioria dos navegadores modernos mostrará uma caixa de diálogo padrão
+                // Se o usuário insistir em recarregar, a sessão do servidor deve tratar o reset
+                const mensagem = "Se sair, o cofre será bloqueado!";
+                e.returnValue = mensagem;
+                return mensagem;
+            }
+        };
+
+        // 3. Bloqueia atalhos de teclado (F5, Ctrl+R, etc)
         window.addEventListener('keydown', function (e) {
             if (
                 e.key === 'F5' || 
-                (e.ctrlKey && e.key === 'r') || 
-                (e.ctrlKey && e.key === 'R') ||
+                (e.ctrlKey && (e.key === 'r' || e.key === 'R')) ||
                 e.key === 'F12' ||
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j'))
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i'))
             ) {
                 e.preventDefault();
-                travarSistema("Tentativa de recarregar ou inspecionar!");
+                travarSistema("Atalho de recarregar/inspecionar!");
             }
         });
 
-        // 2. Bloqueia Botão Direito (Menu de contexto)
+        // 4. Bloqueia o botão direito
         window.addEventListener('contextmenu', (e) => {
             e.preventDefault();
-            travarSistema("Uso do menu de contexto bloqueado!");
+            travarSistema("Menu de contexto bloqueado!");
         });
-
-        // 3. Bloqueia o botão 'Voltar' do navegador
-        history.pushState(null, null, location.href);
-        window.onpopstate = function () {
-            travarSistema("Tentativa de voltar página!");
-        };
-
-        // 4. Aviso ao fechar/recarregar a aba
-        window.onbeforeunload = function() {
-            if (!podeSair) return "Ação proibida!";
-        };
 
         // --- LÓGICA ORIGINAL DO COFRE ---
 
@@ -120,11 +140,7 @@
             if (tentativasRestantes <= 0) return;
 
             const tentativa = Array.from(inputs).map(i => i.value).join('');
-            
-            if(tentativa.length < 5) {
-                msg.innerText = "DIGITE 5 NÚMEROS";
-                return;
-            }
+            if(tentativa.length < 5) return;
 
             const res = await fetch("{% url 'desbloquear_cofre' %}", {
                 method: 'POST',
@@ -139,31 +155,25 @@
                 msg.innerText = "ACESSO CONCEDIDO";
                 msg.className = "status-msg sucesso-txt";
                 volante.classList.add('girar'); 
-                
-                if(btnEnviar) btnEnviar.style.display = "none";
+                btnEnviar.style.display = "none";
                 inputs.forEach(i => i.disabled = true);
-
-                setTimeout(() => {
-                    window.location.href = "{% url 'premio' %}";
-                }, 3000);
+                setTimeout(() => { window.location.href = "{% url 'premio' %}"; }, 3000);
             } else {
                 tentativasRestantes--;
                 spanTentativas.innerText = tentativasRestantes;
 
-                if (tentativasRestantes > 0) {
-                    msg.innerText = "CÓDIGO INVÁLIDO";
-                    msg.className = "status-msg erro-txt";
-                    document.querySelector('.visor-lcd').style.borderColor = "#ff0000";
-                    setTimeout(() => {
-                        document.querySelector('.visor-lcd').style.borderColor = "#00ff00";
-                    }, 500);
-                } else {
-                    podeSair = true; 
-                    if(btnEnviar) btnEnviar.style.display = "none";
-                    msg.innerText = "SISTEMA BLOQUEADO";
-                    msg.className = "status-msg erro-txt";
-                    inputs.forEach(i => i.disabled = true);
-                    window.location.href = "{% url 'ranking' %}";
+                if (data.dicas) {
+                    data.dicas.forEach((dica, index) => {
+                        const el = document.getElementById(`dica-${index}`);
+                        if (dica === "up") { el.innerText = "▲"; el.className = "seta-dica seta-up"; }
+                        else if (dica === "down") { el.innerText = "▼"; el.className = "seta-dica seta-down"; }
+                        else { el.innerText = "✔"; el.className = "seta-dica seta-ok"; }
+                    });
+                }
+
+                if (tentativasRestantes <= 0) {
+                    podeSair = true;
+                    window.location.replace("{% url 'ranking' %}");
                 }
             }
         }

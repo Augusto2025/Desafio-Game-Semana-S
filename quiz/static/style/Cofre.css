@@ -227,3 +227,28 @@ body {
   box-shadow: 0 0;
   transform: translateY(6px);
 }
+
+
+.inputs-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.coluna-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.seta-dica {
+    height: 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.seta-up { color: #00ff00; }   /* Verde para subir */
+.seta-down { color: #ff3333; } /* Vermelho para descer */
+.seta-ok { color: #00ff00; }   /* Check ou algo do tipo */
