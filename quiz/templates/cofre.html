@@ -25,7 +25,7 @@
                 <div class="inputs-container">
                     <div class="coluna-input">
                         <span class="seta-dica" id="dica-0"></span>
-                        <input type="number" class="digito-input" maxlength="1" inputmode="numeric">
+                        <input type="text" class="digito-input" maxlength="1" inputmode="numeric">
                     </div>
                     <div class="coluna-input">
                         <span class="seta-dica" id="dica-1"></span>
@@ -155,7 +155,6 @@
                 msg.innerText = "ACESSO CONCEDIDO";
                 msg.className = "status-msg sucesso-txt";
                 volante.classList.add('girar'); 
-                btnEnviar.style.display = "none";
                 inputs.forEach(i => i.disabled = true);
                 setTimeout(() => { window.location.href = "{% url 'premio' %}"; }, 3000);
             } else {
