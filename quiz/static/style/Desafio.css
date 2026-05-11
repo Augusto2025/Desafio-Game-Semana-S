@@ -76,3 +76,14 @@
 .btn-ajuda:hover:not(:disabled) { background: #3498db; color: white; }
 .btn-ajuda:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
 .btn-alt.removida { opacity: 0.3; background: #333 !important; text-decoration: line-through; pointer-events: none; }
+
+.btn-fechar-dica{
+    background: #c32424;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.2s;
+}
