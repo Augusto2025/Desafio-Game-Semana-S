@@ -25,6 +25,21 @@ def desafio(request):
     codigo = request.session.get('codigo_secreto', '00000')
     return render(request, 'desafio.html', {'codigo_secreto': codigo})
 
+def verificar_cofre(request):
+    """ Nova view para validar o código via AJAX ou Form """
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        tentativa = data.get('tentativa')
+        codigo_real = request.session.get('codigo_secreto')
+        
+        if tentativa == codigo_real:
+            return JsonResponse({'status': 'desbloqueado', 'premio': 'LINK_OU_CONTEUDO_AQUI'})
+        else:
+            return JsonResponse({'status': 'erro', 'mensagem': 'Código incorreto!'})
+
+def ranking_view(request):
+    return render(request, 'ranking.html')
+
 def desafio(request):
     nivel = request.GET.get('nivel')
     codigo = request.session.get('codigo_secreto', '00000')
@@ -33,6 +48,18 @@ def desafio(request):
         'nivel': nivel, 
         'codigo_secreto': codigo
     })
+
+def api_ranking(request):
+    def get_top(nivel):
+        top = Ranking.objects.filter(nivel=nivel)[:10]
+        return list(top.values('nome', 'acertos', 'tempo_texto'))
+
+    data = {
+        'facil': get_top('facil'),
+        'medio': get_top('medio'),
+        'dificil': get_top('dificil'),
+    }
+    return JsonResponse(data)
 
 def salvar_resultado(request):
     if request.method == 'POST':
@@ -88,33 +115,6 @@ def desbloquear_cofre(request):
             return JsonResponse({'status': 'erro', 'mensagem': 'Erro ao processar dados!'}, status=400)
 
     return render(request, 'cofre.html')
-
-def verificar_cofre(request):
-    """ Nova view para validar o código via AJAX ou Form """
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        tentativa = data.get('tentativa')
-        codigo_real = request.session.get('codigo_secreto')
-        
-        if tentativa == codigo_real:
-            return JsonResponse({'status': 'desbloqueado', 'premio': 'LINK_OU_CONTEUDO_AQUI'})
-        else:
-            return JsonResponse({'status': 'erro', 'mensagem': 'Código incorreto!'})
-
-def ranking_view(request):
-    return render(request, 'ranking.html')
-
-def api_ranking(request):
-    def get_top(nivel):
-        top = Ranking.objects.filter(nivel=nivel)[:10]
-        return list(top.values('nome', 'acertos', 'tempo_texto'))
-
-    data = {
-        'facil': get_top('facil'),
-        'medio': get_top('medio'),
-        'dificil': get_top('dificil'),
-    }
-    return JsonResponse(data)
 
 def api_premio(request):
     return render(request, 'premio.html')
