@@ -1,11 +1,18 @@
-/* Estilos específicos para a tela de conclusão */
-body {
-    background-color: #1a1a1a;
-    /* Fundo escuro para contrastar com o cofre */
-    overflow: hidden;
-    /* Evita barras de rolagem com os confetes */
+/* RESET BÁSICO */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+/* FUNDO */
+body {
+    background-color: #1a1a1a;
+    font-family: Arial, sans-serif;
+    overflow: hidden; /* evita scroll com confete */
+}
+
+/* CONTAINER CENTRAL */
 .container-conclusao {
     display: flex;
     justify-content: center;
@@ -13,13 +20,14 @@ body {
     height: 100vh;
 }
 
+/* WRAPPER */
 .paineis-wrapper {
     display: flex;
     gap: 40px;
     align-items: center;
 }
 
-/* Painel de Sucesso (Esquerda) */
+/* PAINEL DE SUCESSO */
 .painel-sucesso {
     background: white;
     padding: 40px;
@@ -28,26 +36,119 @@ body {
     box-shadow: 0 10px 30px rgba(0, 255, 0, 0.3);
     border: 4px solid #2ecc71;
     max-width: 500px;
+
+    /* animação suave ao aparecer */
+    animation: subir 0.5s ease;
+}
+
+@keyframes subir {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .painel-sucesso h1 {
     color: #27ae60;
     font-size: 2.5rem;
-    margin-top: 0;
+    margin-bottom: 10px;
     text-transform: uppercase;
 }
 
 .icon-sucesso {
     width: 300px;
     height: 300px;
-    margin: 20px 0;
+    margin: 20px auto;
     color: #2ecc71;
-    justify-self: center;
-    align-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .painel-sucesso p {
     color: #333;
     font-size: 1.1rem;
     margin-bottom: 30px;
+}
+
+/* CRÉDITOS INTERNOS */
+.creditos {
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 2px solid #eee;
+    text-align: center;
+    opacity: 0.8;
+    transition: 0.3s;
+}
+
+.creditos:hover {
+    opacity: 1;
+    transform: scale(1.02);
+}
+
+.creditos h3 {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.creditos p {
+    font-size: 0.9rem;
+    color: #777;
+    margin: 2px 0;
+}
+
+/* ========================= */
+/* FOOTER INFINITO (CORRIGIDO) */
+/* ========================= */
+
+.creditos-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 10px 0;
+    z-index: 9999;
+}
+
+/* TRACK (container animado) */
+.creditos-track {
+    display: flex;
+    width: max-content;
+    animation: scrollInfinito 20s linear infinite;
+}
+
+/* CONTEÚDO DUPLICADO */
+.creditos-content {
+    display: flex;
+}
+
+/* TEXTO */
+.creditos-content span {
+    margin: 0 50px;
+    color: #2ecc71;
+    font-weight: bold;
+    white-space: nowrap;
+    text-shadow: 0 0 8px rgba(46, 204, 113, 0.6);
+}
+
+/* ANIMAÇÃO SEM BURACO */
+@keyframes scrollInfinito {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* PAUSA AO PASSAR O MOUSE */
+.creditos-footer:hover .creditos-track {
+    animation-play-state: paused;
 }
