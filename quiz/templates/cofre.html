@@ -98,11 +98,7 @@
                 if (tentativasRestantes > 0) {
                     msg.innerText = "CÓDIGO INVÁLIDO";
                     msg.className = "status-msg erro-txt";
-                    
-                    // Limpa os campos para nova tentativa
-                    inputs.forEach(i => i.value = '');
-                    inputs[0].focus();
-                    
+                                     
                     // Pisca o LCD em vermelho
                     document.querySelector('.visor-lcd').style.borderColor = "#ff0000";
                     setTimeout(() => {
