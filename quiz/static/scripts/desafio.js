@@ -388,51 +388,72 @@ function proxima() {
   }
 }
 
-function finalizar() {
-  if (!timerRodando) return;
-  timerRodando = false;
-  tempoFinalSalvo = Date.now() - inicio;
+async function finalizar() {
+    if (!timerRodando) return;
+    timerRodando = false;
+    tempoFinalSalvo = Date.now() - inicio;
 
-  // EXIBE O CÓDIGO COLETADO NO MODAL
-  // Junta o array ["1", "_", "3", "_", "5"] em "1 _ 3 _ 5"
-  const revisaoEl = document.getElementById("revisao-codigo");
-  if (revisaoEl) {
-    revisaoEl.innerText = progressoCodigo.join(" ");
-  }
+    const dificuldadeAtual = localStorage.getItem("dificuldade") || "padrao";
+    const chaveConcluido = "ja_concluiu_" + dificuldadeAtual;
+    const jaJogou = localStorage.getItem(chaveConcluido);
 
-  document.getElementById("modal-final").style.display = "flex";
+    if (!jaJogou) {
+        // --- PRIMEIRA VEZ: MOSTRA MODAL ---
+        const revisaoEl = document.getElementById("revisao-codigo");
+        if (revisaoEl) {
+            revisaoEl.innerText = progressoCodigo.join(" "); 
+        }
+        document.getElementById("modal-final").style.display = "flex";
+    } else {
+        // --- JOGANDO DE NOVO: VAI DIRETO ---
+        console.log("Redirecionando para o ranking...");
+        
+        // USAMOS A URL QUE VEM DO CONFIG_JOGO
+        const urlRanking = window.CONFIG_JOGO.urlRanking; 
+        await salvarEIrPara(urlRanking); 
+    }
 }
 
+// Função auxiliar para salvar os dados via POST e depois mudar de página
+async function salvarEIrPara(urlDestino) {
+    podeSair = true; // Desativa o aviso de "tem certeza que deseja sair?"
+
+    const dados = {
+        nome: localStorage.getItem("usuarioAtual"),
+        acertos: acertos,
+        tempo: tempoFinalSalvo,
+        tempoTexto: formatar(tempoFinalSalvo),
+        nivel: localStorage.getItem("dificuldade"),
+    };
+
+    const config = window.CONFIG_JOGO || {};
+    
+    try {
+        await fetch(config.urlSalvar, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": config.csrfToken,
+            },
+            body: JSON.stringify(dados),
+        });
+    } catch (e) {
+        console.error("Erro ao salvar dados:", e);
+    }
+
+    // Redireciona para a URL desejada (Cofre ou Ranking)
+    window.location.href = urlDestino;
+}
+
+// Função chamada apenas pelo botão do modal (1ª vez)
 async function confirmarIrParaCofre() {
-  podeSair = true; // Libera o bloqueio de saída da página
+    const dificuldadeAtual = localStorage.getItem("dificuldade") || "padrao";
+    
+    // MARCA COMO CONCLUÍDO: Na próxima vez, o 'finalizar' vai direto pro ranking
+    localStorage.setItem("ja_concluiu_" + dificuldadeAtual, "true");
 
-  const dados = {
-    nome: localStorage.getItem("usuarioAtual"),
-    acertos: acertos,
-    tempo: tempoFinalSalvo,
-    tempoTexto: formatar(tempoFinalSalvo),
-    nivel: dificuldade,
-  };
-
-  const urlSalvar = window.CONFIG_JOGO ? window.CONFIG_JOGO.urlSalvar : "";
-  const urlCofre = window.CONFIG_JOGO ? window.CONFIG_JOGO.urlCofre : "";
-  const token = window.CONFIG_JOGO ? window.CONFIG_JOGO.csrfToken : "";
-
-  try {
-    await fetch(urlSalvar, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": token,
-      },
-      body: JSON.stringify(dados),
-    });
-  } catch (e) {
-    console.error("Erro ao salvar dados:", e);
-  }
-
-  // Redirecionamento Final
-  window.location.href = urlCofre;
+    const urlCofre = window.CONFIG_JOGO ? window.CONFIG_JOGO.urlCofre : "";
+    await salvarEIrPara(urlCofre);
 }
 
 function formatar(ms) {
