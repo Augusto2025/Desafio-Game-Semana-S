@@ -132,8 +132,29 @@
             </div>
 
             <div class="btn-group">
-                <button class="btn btn-blue" onclick="window.location.href='{% url 'cadastro' %}'">Novo Jogo</button>
+                <button class="btn btn-blue" onclick="window.location.href='{% url 'cadastro' %}'">Voltar para o Cadastro</button>
+                <a href="#" class="btn btn-blue" onclick="irProximoNivel(event)">
+                    Jogar de novo (Salvar progresso)
+                </a>
             </div>
+
+            <script>
+            function irProximoNivel(e) {
+            e.preventDefault(); // impede de sair antes de salvar
+
+            let nivelAtual = localStorage.getItem("dificuldade");
+
+            let concluidos = JSON.parse(localStorage.getItem("niveisConcluidos")) || [];
+
+            if (nivelAtual && !concluidos.includes(nivelAtual)) {
+                concluidos.push(nivelAtual);
+            }
+
+            localStorage.setItem("niveisConcluidos", JSON.stringify(concluidos));
+
+            window.location.href = "{% url 'dificuldade' %}";
+            }
+            </script>
         </section>
     </div>
 
