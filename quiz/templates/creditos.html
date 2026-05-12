@@ -1,69 +1,83 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
+    />
     <link rel="stylesheet" href="{% static 'style/creditos.css' %}" />
-    <meta charset="UTF-8">
-    
+    <meta charset="UTF-8" />
+
     <title>Créditos</title>
+  </head>
 
-</head>
-
-<body>
-
-<div class="creditos-container">
-
-    <!-- CRÉDITOS -->
-    <div class="creditos-content">
+  <body>
+    <div class="creditos-container">
+      <!-- CRÉDITOS -->
+      <button class="skip-btn" onclick="pularCreditos()">⏭ Pular</button>
+      <div class="creditos-content">
+        <!-- BOTÃO PULAR -->
 
         <h1>🎬 CRÉDITOS</h1>
 
-        <p>🎮 Projeto</p> <br>
+        <p>🎮 Projeto</p>
+        <br />
         <h2>Quiz do Cofre</h2>
-        <br>
+        <br />
 
-        <p>💻 Desenvolvedores</p><br>
-        <h2>Alcides Miranda</h2><br>
-        <h2>Augusto Souza</h2><br>
-        <h2>Clariane Azevedo</h2><br>
+        <p>💻 Desenvolvedores</p>
+        <br />
+        <h2>Alcides Miranda</h2>
+        <br />
+        <h2>Augusto Souza</h2>
+        <br />
+        <h2>Clariane Torres</h2>
+        <br />
 
         <p>💻 Tecnologias Utilizadas</p>
         <div class="tech-list">
+          <h2><i class="devicon-html5-plain colored"></i> HTML5</h2>
+          <br />
 
-            <h2><i class="devicon-html5-plain colored"></i> HTML5</h2><br>
+          <h2><i class="devicon-css3-plain colored"></i> CSS3</h2>
+          <br />
 
-            <h2><i class="devicon-css3-plain colored"></i> CSS3</h2><br>
+          <h2><i class="devicon-javascript-plain colored"></i> JavaScript</h2>
+          <br />
 
-            <h2><i class="devicon-javascript-plain colored"></i> JavaScript</h2><br>
+          <h2><i class="devicon-django-plain colored"></i> Django</h2>
+          <br />
 
-            <h2><i class="devicon-django-plain colored"></i> Django</h2><br>
+          <h2><i class="devicon-python-plain colored"></i> Python</h2>
+          <br />
 
-            <h2><i class="devicon-python-plain colored"></i> Python</h2><br>
+          <h2>🟢 Neon Postgres</h2>
+          <br />
 
-            <h2>🟢 Neon Postgres</h2><br>
-
-            <h2>▲ Vercel</h2><br>
-
+          <h2>▲ Vercel</h2>
+          <br />
         </div>
+      </div>
 
-
-    </div>
-
-    <!-- FINAL -->
-    <div class="final-msg">
-        <h1>🎉 OBRIGADO POR JOGAR 🎉</h1><br>
+      <!-- FINAL -->
+      <div class="final-msg">
+        <h1>🎉 OBRIGADO POR JOGAR 🎉</h1>
+        <br />
         <button onclick="voltar()">⬅ Voltar para o inicio</button>
+      </div>
     </div>
 
-</div>
+    <script>
+      function voltar() {
+        window.location.href = "{% url 'ranking' %}";
+      }
 
-<script>
-function voltar() {
-    window.location.href = "{% url 'ranking' %}";
-}
-</script>
+      function pularCreditos() {
+        window.location.href = "{% url 'ranking' %}";
+      }
 
-</body>
+    </script>
+  </body>
 </html>
 ```
