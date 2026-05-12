@@ -393,25 +393,23 @@ async function finalizar() {
     timerRodando = false;
     tempoFinalSalvo = Date.now() - inicio;
 
+    // Pegamos apenas o usuário (sem a dificuldade)
     const usuarioAtual = (localStorage.getItem("usuarioAtual") || "anonimo").trim();
-    const dificuldadeAtual = localStorage.getItem("dificuldade") || "padrao";
-    const chaveConcluido = `ja_concluiu_${usuarioAtual}_${dificuldadeAtual}`;
     
-    const jaJogou = localStorage.getItem(chaveConcluido);
+    // Chave GLOBAL para o usuário (independente do nível)
+    const chaveGlobal = `ja_concluiu_${usuarioAtual}_geral`;
+    const jaAbriuCofreAlgumaVez = localStorage.getItem(chaveGlobal);
 
-    console.log("Chave verificada:", chaveConcluido);
-    console.log("Status jaJogou:", jaJogou);
-
-    if (!jaJogou) {
-        // --- PRIMEIRA VEZ: MOSTRA MODAL ---
+    if (!jaAbriuCofreAlgumaVez) {
+        // --- PRIMEIRA VEZ DO USUÁRIO NO SISTEMA (MOSTRA COFRE) ---
         const revisaoEl = document.getElementById("revisao-codigo");
         if (revisaoEl) {
             revisaoEl.innerText = progressoCodigo.join(" "); 
         }
         document.getElementById("modal-final").style.display = "flex";
     } else {
-        // --- SEGUNDA VEZ EM DIANTE: VAI DIRETO ---
-        // Adicionamos um pequeno feedback visual se quiser, ou apenas chamamos:
+        // --- JÁ ABRIU O COFRE ANTES EM QUALQUER NÍVEL: VAI DIRETO PRO RANKING ---
+        console.log("Usuário já conhece o cofre. Redirecionando direto...");
         const urlRanking = window.CONFIG_JOGO.urlRanking; 
         await salvarEIrPara(urlRanking); 
     }
@@ -449,14 +447,13 @@ async function salvarEIrPara(urlDestino) {
 }
 
 async function confirmarIrParaCofre() {
+    // Pegamos o usuário para marcar que ele já passou pela experiência do cofre
     const usuarioAtual = (localStorage.getItem("usuarioAtual") || "anonimo").trim();
-    const dificuldadeAtual = localStorage.getItem("dificuldade") || "padrao";
-    const chaveConcluido = `ja_concluiu_${usuarioAtual}_${dificuldadeAtual}`;
+    const chaveGlobal = `ja_concluiu_${usuarioAtual}_geral`;
     
-    // 1. Grava PRIMEIRO no localStorage (Síncrono e imediato)
-    localStorage.setItem(chaveConcluido, "true");
+    // MARCA COMO CONCLUÍDO GLOBALMENTE
+    localStorage.setItem(chaveGlobal, "true");
 
-    // 2. Depois salva no servidor e redireciona
     const urlCofre = window.CONFIG_JOGO ? window.CONFIG_JOGO.urlCofre : "";
     await salvarEIrPara(urlCofre);
 }
