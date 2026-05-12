@@ -6,6 +6,42 @@ body {
     font-family: Arial, sans-serif;
 }
 
+/* BOTÃO PULAR */
+.skip-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+
+  padding: 18px 35px;
+
+  border: none;
+  border-radius: 15px;
+
+  background: #00ff88;
+  color: #000;
+
+  font-size: 22px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  z-index: 9999;
+
+  
+}
+
+.skip-btn:hover {
+  transform: scale(1.08);
+  background: #00cc6a;
+}
+
+
+
+
+
+
+
+
 
 /* CONTAINER */
 
