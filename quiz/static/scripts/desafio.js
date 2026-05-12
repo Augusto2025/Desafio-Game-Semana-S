@@ -393,9 +393,14 @@ async function finalizar() {
     timerRodando = false;
     tempoFinalSalvo = Date.now() - inicio;
 
+    const usuarioAtual = (localStorage.getItem("usuarioAtual") || "anonimo").trim();
     const dificuldadeAtual = localStorage.getItem("dificuldade") || "padrao";
-    const chaveConcluido = "ja_concluiu_" + dificuldadeAtual;
+    const chaveConcluido = `ja_concluiu_${usuarioAtual}_${dificuldadeAtual}`;
+    
     const jaJogou = localStorage.getItem(chaveConcluido);
+
+    console.log("Chave verificada:", chaveConcluido);
+    console.log("Status jaJogou:", jaJogou);
 
     if (!jaJogou) {
         // --- PRIMEIRA VEZ: MOSTRA MODAL ---
@@ -405,10 +410,8 @@ async function finalizar() {
         }
         document.getElementById("modal-final").style.display = "flex";
     } else {
-        // --- JOGANDO DE NOVO: VAI DIRETO ---
-        console.log("Redirecionando para o ranking...");
-        
-        // USAMOS A URL QUE VEM DO CONFIG_JOGO
+        // --- SEGUNDA VEZ EM DIANTE: VAI DIRETO ---
+        // Adicionamos um pequeno feedback visual se quiser, ou apenas chamamos:
         const urlRanking = window.CONFIG_JOGO.urlRanking; 
         await salvarEIrPara(urlRanking); 
     }
@@ -445,13 +448,15 @@ async function salvarEIrPara(urlDestino) {
     window.location.href = urlDestino;
 }
 
-// Função chamada apenas pelo botão do modal (1ª vez)
 async function confirmarIrParaCofre() {
+    const usuarioAtual = (localStorage.getItem("usuarioAtual") || "anonimo").trim();
     const dificuldadeAtual = localStorage.getItem("dificuldade") || "padrao";
+    const chaveConcluido = `ja_concluiu_${usuarioAtual}_${dificuldadeAtual}`;
     
-    // MARCA COMO CONCLUÍDO: Na próxima vez, o 'finalizar' vai direto pro ranking
-    localStorage.setItem("ja_concluiu_" + dificuldadeAtual, "true");
+    // 1. Grava PRIMEIRO no localStorage (Síncrono e imediato)
+    localStorage.setItem(chaveConcluido, "true");
 
+    // 2. Depois salva no servidor e redireciona
     const urlCofre = window.CONFIG_JOGO ? window.CONFIG_JOGO.urlCofre : "";
     await salvarEIrPara(urlCofre);
 }
