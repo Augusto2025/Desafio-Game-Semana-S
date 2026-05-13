@@ -134,9 +134,11 @@
             <div class="btn-group">
                 <button class="btn btn-blue" onclick="window.location.href='{% url 'cadastro' %}'">Voltar para o Cadastro</button>
                 
-                <a href="#" class="btn btn-blue" onclick="irProximoNivel(event)">
-                    Jogar de novo (Salvar progresso)
-                </a>
+                {% if usuario_logado %}
+                    <a href="#" id="btn-jogar-denovo" class="btn btn-blue" onclick="irProximoNivel(event)">
+                        Jogar de novo (Salvar progresso)
+                    </a>
+                {% endif %}
             </div>
 
             <script>
@@ -256,6 +258,31 @@
         function fecharModalResultado() {
             document.getElementById("modalResultado").style.display = "none";
         }
+
+        function verificarVisibilidadeBotao() {
+            const btnNovo = document.getElementById("btn-jogar-denovo");
+            if (!btnNovo) return;
+
+            const usuarioSessao = localStorage.getItem("usuarioAtual");
+
+            // Se não houver usuário no localStorage, removemos o botão da tela
+            if (!usuarioSessao) {
+                btnNovo.style.display = "none";
+            }
+        }
+
+        // Função para quando o usuário clicar em "Voltar para o Cadastro"
+        function sairDoRanking() {
+            // Limpamos o usuário atual para que o "Jogar de Novo" não apareça se ele voltar por esta aba
+            localStorage.removeItem("usuarioAtual");
+            // Se quiser resetar o progresso de níveis ao sair, descomente a linha abaixo:
+            // localStorage.removeItem("niveisConcluidos");
+
+            window.location.href = "{% url 'cadastro' %}";
+        }
+
+        // Chame a verificação assim que a página carregar
+        window.addEventListener("DOMContentLoaded", verificarVisibilidadeBotao);
 
         atualizarRanking();
         setInterval(atualizarRanking, 10000); 
