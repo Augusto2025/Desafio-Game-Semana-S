@@ -12,7 +12,6 @@
   <div class="container">
 
     <!-- Fácil -->
-
     <div class="card" onclick="jogar('facil')">
       <div class="card-front facil">
         <img src="{% static 'img/facil.png' %}">
@@ -21,7 +20,6 @@
     </div>
 
     <!-- Médio -->
-
     <div class="card" onclick="jogar('medio')">
       <div class="card-front medio">
         <img src="{% static 'img/medio.webp' %}">
@@ -30,7 +28,6 @@
     </div>
 
     <!-- Difícil -->
-
     <div class="card" onclick="jogar('dificil')">
       <div class="card-front dificil">
         <img src="{% static 'img/dificil.webp' %}">
@@ -40,20 +37,48 @@
 
   </div>
 
-  <!-- MODAL -->
+  <!-- MODAL AVISO -->
 
-  <div id="modal" class="modal">
+  <div id="modal-aviso" class="modal">
     <div class="modal-content">
-      <h2 class="jogo-inicia">Jogo iniciando...</h2>
-      <p>Você terá <strong>15 minutos</strong> para descobrir o código do cofre.</p>
-      <p><strong>Você está preparado?</strong></p>
 
+      <h2 class="jogo-inicia">⚠️ Aviso Importante</h2>
 
-  <div class="modal-buttons">
-    <button type="button" onclick="cancelar()">Não</button>
-    <button onclick="confirmar()">Sim</button>
+      <p>
+        É <strong>proibido atualizar a página</strong> durante o desafio.
+      </p>
+
+      <p>
+        Caso a página seja recarregada, o jogador poderá ser
+        <strong>desclassificado</strong>.
+      </p>
+
+      <div class="modal-buttons">
+        <button onclick="fecharAviso()">Cancelar</button>
+        <button onclick="abrirInicio()">Continuar</button>
+      </div>
+
+    </div>
   </div>
 
+  <!-- MODAL INICIANDO -->
+
+  <div id="modal-inicio" class="modal">
+    <div class="modal-content">
+
+      <h2 class="jogo-inicia">🎮 Jogo iniciando...</h2>
+
+      <p>
+        Você terá <strong>15 minutos</strong>
+        para descobrir o código do cofre.
+      </p>
+
+      <p><strong>Você está preparado?</strong></p>
+
+      <div class="modal-buttons">
+        <button type="button" onclick="cancelar()">Não</button>
+        <button onclick="confirmar()">Sim</button>
+      </div>
 
     </div>
   </div>
@@ -61,21 +86,37 @@
   <script>
     let nivelSelecionado = null;
 
+    // abre aviso
     function jogar(nivel) {
       nivelSelecionado = nivel;
 
-      document.getElementById("modal").style.display = "flex";
+      document.getElementById("modal-aviso").style.display = "flex";
     }
 
+    // fecha aviso
+    function fecharAviso() {
+      document.getElementById("modal-aviso").style.display = "none";
+    }
+
+    // sai do aviso e abre modal de iniciar
+    function abrirInicio() {
+      document.getElementById("modal-aviso").style.display = "none";
+
+      document.getElementById("modal-inicio").style.display = "flex";
+    }
+
+    // confirma entrada
     function confirmar() {
       localStorage.setItem("dificuldade", nivelSelecionado);
 
       window.location.href = "{% url 'desafio' %}?nivel=" + nivelSelecionado;
     }
 
+    // cancela
     function cancelar() {
-      document.getElementById("modal").style.display = "none";
+      document.getElementById("modal-inicio").style.display = "none";
     }
   </script>
+
 </body>
 </html>
