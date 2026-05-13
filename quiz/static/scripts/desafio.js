@@ -84,8 +84,32 @@ const bancoFacil = [
     img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088533/1_tbpkoe.png",
   },
   {
+    q:"Todo código escrito em Portugol deve estar contido dentro de um bloco principal que define o início e o fim do código. Qual é o nome da estrutura obrigatória que 'abraça' todo o seu algoritmo?", 
+    a: ["leia()", "escreva()", "programa", "cadeia"],
+    c: "programa",
+    d: "É o bloco principal que engloba todo o código do programa.",
+    // img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088533/1_tbpkoe.png",
+  },
+  {
+    q:"Você chegou ao fim de uma função no Portugol Studio. Qual símbolo fecha e encerra esse bloco de código?",
+    a: ["}", ")", ">", "]"],
+    c: "}",
+    d: "É o símbolo que fecha o bloco de código da função.",
+    // img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088533/1_tbpkoe.png",
+  },
+  {
+    q:"A tela do console ficou cheia de informações. Qual será o efeito do comando limpa() no Portugol Studio?",
+    a: ["O computador será desligado.", "O programa será excluído.", "Todas as mensagens exibidas anteriormente sumirão.", "As variáveis voltarão a valer zero."],
+    c: "Todas as mensagens exibidas anteriormente sumirão.",
+    d: "Pense no que acontece quando apagamos tudo que está escrito em um quadro para começar novamente.",
+    // img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088533/1_tbpkoe.png",
+  },
+
+
+
+  {
     q: "No Portugol, cada variável precisa ter um tipo para armazenar informações corretamente. Quando queremos guardar textos, palavras ou nomes de pessoas, qual tipo devemos utilizar?",
-    a: ["inteiro", "real", "cadeia", "logico"],
+    a: ["inteiro", "real", "cadeia", "escreva()"],
     c: "cadeia",
     d: "Imagine uma sequência ou 'corrente' de caracteres unidos.",
     img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088533/2_bscfrm.png",
@@ -99,7 +123,7 @@ const bancoFacil = [
   },
   {
     q: "No Portugol, utilizamos um símbolo de atribuição para guardar um valor dentro de uma variável. Qual símbolo é usado para fazer uma variável receber um valor?",
-    a: ["==", "=", "<-", "+"],
+    a: ["==", "=!", "<-", "+"],
     c: "<-",
     d: "É uma seta que indica o valor 'entrando' na variável.",
     img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088535/4_z2xq0w.png",
@@ -111,13 +135,13 @@ const bancoFacil = [
     d: "Refere-se ao conjunto dos números reais na matemática.",
     img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088534/5_ouxl3e.png",
   },
-  {
-    q: "No Portugol, utilizamos estruturas de decisão para que o programa possa tomar decisões de acordo com uma condição. O comando 'se' serve para:",
-    a: ["Repetir várias vezes", "Guardar valores", "Testar uma condição", "Encerrar o programa"],
-    c: "Testar uma condição",
-    d: "Funciona como uma pergunta: 'Isso é verdade?'.",
-    img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088535/6_gxdves.png",
-  },
+  // {
+  //   q: "No Portugol, utilizamos estruturas de decisão para que o programa possa tomar decisões de acordo com uma condição. O comando 'se' serve para:",
+  //   a: ["Repetir várias vezes", "Guardar valores", "Testar uma condição", "Encerrar o programa"],
+  //   c: "Testar uma condição",
+  //   d: "Funciona como uma pergunta: 'Isso é verdade?'.",
+  //   img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088535/6_gxdves.png",
+  // },
   {
     q: "No Portugol, o operador '%' é utilizado para calcular o resto de uma divisão inteira. Qual será o resultado da expressão 10 % 3?",
     a: ["3", "1", "0", "10"],
