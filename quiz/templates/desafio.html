@@ -44,9 +44,10 @@
   </div>
   <div id="modal-final" class="modal-sobreposicao" style="display: none;">
       <div class="modal-conteudo">
-          <h2>Desafio Concluído!</h2>
-          <p>Você coletou os dígitos para o cofre.</p>
-          <div class="revisao-box">
+          <h2 id="titulo-final">Desafio Concluído!</h2>
+          <p id="msg-final">Você coletou os dígitos para o cofre.</p>
+          
+          <div class="revisao-box" id="box-codigo">
               Código: <span id="revisao-codigo">_ _ _ _ _</span>
           </div>
           <button id="btn-confirmar-final" class="btn btn-blue" onclick="confirmarIrParaCofre()">
@@ -71,7 +72,8 @@
       codigoSecreto: "{{ codigo_secreto|escapejs }}",
       csrfToken: "{{ csrf_token }}",
       urlSalvar: "{% url 'salvar_resultado' %}",
-      urlCofre: "{% url 'desbloquear_cofre' %}"
+      urlCofre: "{% url 'desbloquear_cofre' %}",
+      urlRanking: "{% url 'ranking' %}"
     };
   </script>
   <script src="{% static 'scripts/desafio.js' %}"></script>

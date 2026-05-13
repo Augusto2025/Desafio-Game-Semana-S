@@ -1,3 +1,72 @@
+// --- BLOQUEIO TOTAL E BLINDADO ---
+(function() {
+    // 1. Bloqueia Teclado (F5, Ctrl+R, F12, Ctrl+Shift+I)
+    // O uso de 'true' no final garante que seu código capture o evento antes de todos
+    window.addEventListener('keydown', function(e) {
+        if (podeSair) return;
+
+        const isF5 = e.key === 'F5' || e.keyCode === 116;
+        const isCtrlR = (e.ctrlKey || e.metaKey) && (e.key === 'r' || e.keyCode === 82);
+        const isDevTools = e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.keyCode === 73));
+
+        if (isF5 || isCtrlR || isDevTools) {
+            e.preventDefault();
+            e.stopPropagation(); // Impede que o navegador receba o comando
+            travarSistema("Tentativa de recarregar ou inspecionar!");
+            return false;
+        }
+    }, true); 
+
+    // 2. Bloqueio de Botão Direito
+    document.addEventListener('contextmenu', function(e) {
+        if (!podeSair) {
+            e.preventDefault();
+            travarSistema("Botão direito bloqueado!");
+        }
+    }, true);
+
+    // 3. A "Rede de Segurança" (Aviso de saída)
+    // Se o usuário clicar no botão 'recarregar' do navegador com o mouse,
+    // este evento é o único que pode parar a ação.
+    window.addEventListener('beforeunload', function(e) {
+        if (!podeSair) {
+            // A mensagem personalizada foi removida pelos navegadores modernos por segurança,
+            // mas o comando abaixo ativa o diálogo padrão do sistema.
+            e.preventDefault();
+            e.returnValue = ''; 
+        }
+    });
+
+    // 4. Bloqueio do Botão Voltar
+    history.pushState(null, null, location.href);
+    window.onpopstate = function() {
+        if (!podeSair) {
+            history.pushState(null, null, location.href);
+            travarSistema("Botão voltar!");
+        }
+    };
+})();
+
+// Captura o momento em que a página começa a "ir embora"
+window.addEventListener('pagehide', function() {
+    if (!podeSair) {
+        // Como a página está sumindo, tentamos marcar no localStorage
+        // que este usuário tentou burlar o sistema
+        const usuario = localStorage.getItem("usuarioAtual") || "anonimo";
+        localStorage.setItem(`tentou_recarregar_${usuario}`, "true");
+    }
+});
+
+// Quando ele voltar para a página, verificamos se ele veio de um recarregamento proibido
+window.addEventListener('load', function() {
+    const usuario = localStorage.getItem("usuarioAtual") || "anonimo";
+    if (localStorage.getItem(`tentou_recarregar_${usuario}`) === "true") {
+        localStorage.removeItem(`tentou_recarregar_${usuario}`);
+        alert("⚠️ Você tentou recarregar a página! Isso não é permitido.");
+        window.location.replace(window.CONFIG_JOGO.urlRanking);
+    }
+});
+
 // --- SISTEMA DE AJUDAS (Uso único) ---
 let ajudasUsadas = {
   pular: false,
@@ -412,51 +481,74 @@ function proxima() {
   }
 }
 
-function finalizar() {
-  if (!timerRodando) return;
-  timerRodando = false;
-  tempoFinalSalvo = Date.now() - inicio;
+async function finalizar() {
+    if (!timerRodando) return;
+    timerRodando = false;
+    tempoFinalSalvo = Date.now() - inicio;
 
-  // EXIBE O CÓDIGO COLETADO NO MODAL
-  // Junta o array ["1", "_", "3", "_", "5"] em "1 _ 3 _ 5"
-  const revisaoEl = document.getElementById("revisao-codigo");
-  if (revisaoEl) {
-    revisaoEl.innerText = progressoCodigo.join(" ");
-  }
+    // Pegamos apenas o usuário (sem a dificuldade)
+    const usuarioAtual = (localStorage.getItem("usuarioAtual") || "anonimo").trim();
+    
+    // Chave GLOBAL para o usuário (independente do nível)
+    const chaveGlobal = `ja_concluiu_${usuarioAtual}_geral`;
+    const jaAbriuCofreAlgumaVez = localStorage.getItem(chaveGlobal);
 
-  document.getElementById("modal-final").style.display = "flex";
+    if (!jaAbriuCofreAlgumaVez) {
+        // --- PRIMEIRA VEZ DO USUÁRIO NO SISTEMA (MOSTRA COFRE) ---
+        const revisaoEl = document.getElementById("revisao-codigo");
+        if (revisaoEl) {
+            revisaoEl.innerText = progressoCodigo.join(" "); 
+        }
+        document.getElementById("modal-final").style.display = "flex";
+    } else {
+        // --- JÁ ABRIU O COFRE ANTES EM QUALQUER NÍVEL: VAI DIRETO PRO RANKING ---
+        console.log("Usuário já conhece o cofre. Redirecionando direto...");
+        const urlRanking = window.CONFIG_JOGO.urlRanking; 
+        await salvarEIrPara(urlRanking); 
+    }
+}
+
+// Função auxiliar para salvar os dados via POST e depois mudar de página
+async function salvarEIrPara(urlDestino) {
+    podeSair = true; // Desativa o aviso de "tem certeza que deseja sair?"
+
+    const dados = {
+        nome: localStorage.getItem("usuarioAtual"),
+        acertos: acertos,
+        tempo: tempoFinalSalvo,
+        tempoTexto: formatar(tempoFinalSalvo),
+        nivel: localStorage.getItem("dificuldade"),
+    };
+
+    const config = window.CONFIG_JOGO || {};
+    
+    try {
+        await fetch(config.urlSalvar, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": config.csrfToken,
+            },
+            body: JSON.stringify(dados),
+        });
+    } catch (e) {
+        console.error("Erro ao salvar dados:", e);
+    }
+
+    // Redireciona para a URL desejada (Cofre ou Ranking)
+    window.location.href = urlDestino;
 }
 
 async function confirmarIrParaCofre() {
-  podeSair = true; // Libera o bloqueio de saída da página
+    // Pegamos o usuário para marcar que ele já passou pela experiência do cofre
+    const usuarioAtual = (localStorage.getItem("usuarioAtual") || "anonimo").trim();
+    const chaveGlobal = `ja_concluiu_${usuarioAtual}_geral`;
+    
+    // MARCA COMO CONCLUÍDO GLOBALMENTE
+    localStorage.setItem(chaveGlobal, "true");
 
-  const dados = {
-    nome: localStorage.getItem("usuarioAtual"),
-    acertos: acertos,
-    tempo: tempoFinalSalvo,
-    tempoTexto: formatar(tempoFinalSalvo),
-    nivel: dificuldade,
-  };
-
-  const urlSalvar = window.CONFIG_JOGO ? window.CONFIG_JOGO.urlSalvar : "";
-  const urlCofre = window.CONFIG_JOGO ? window.CONFIG_JOGO.urlCofre : "";
-  const token = window.CONFIG_JOGO ? window.CONFIG_JOGO.csrfToken : "";
-
-  try {
-    await fetch(urlSalvar, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": token,
-      },
-      body: JSON.stringify(dados),
-    });
-  } catch (e) {
-    console.error("Erro ao salvar dados:", e);
-  }
-
-  // Redirecionamento Final
-  window.location.href = urlCofre;
+    const urlCofre = window.CONFIG_JOGO ? window.CONFIG_JOGO.urlCofre : "";
+    await salvarEIrPara(urlCofre);
 }
 
 function formatar(ms) {
