@@ -51,28 +51,28 @@ function ajudaRemover() {
 }
 
 function ajudaDica() {
-    if (ajudasUsadas.dica) return;
+  if (ajudasUsadas.dica) return;
 
-    const p = perguntas[indice];
-    // Pega a dica personalizada do banco, ou uma padrão caso não exista
-    const textoParaExibir = p.d || "Analise bem as alternativas antes de responder.";
+  const p = perguntas[indice];
+  // Pega a dica personalizada do banco, ou uma padrão caso não exista
+  const textoParaExibir = p.d || "Analise bem as alternativas antes de responder.";
 
-    // Insere o texto no modal e exibe
-    document.getElementById("texto-dica-modal").innerText = textoParaExibir;
-    document.getElementById("modal-dica").style.display = "flex";
+  // Insere o texto no modal e exibe
+  document.getElementById("texto-dica-modal").innerText = textoParaExibir;
+  document.getElementById("modal-dica").style.display = "flex";
 
-    // Marca como usada e desativa o botão
-    ajudasUsadas.dica = true;
-    const btn = document.getElementById("help-tip");
-    if (btn) {
-        btn.disabled = true;
-        btn.style.opacity = "0.5";
-        btn.style.cursor = "not-allowed";
-    }
+  // Marca como usada e desativa o botão
+  ajudasUsadas.dica = true;
+  const btn = document.getElementById("help-tip");
+  if (btn) {
+    btn.disabled = true;
+    btn.style.opacity = "0.5";
+    btn.style.cursor = "not-allowed";
+  }
 }
 
 function fecharModalDica() {
-    document.getElementById("modal-dica").style.display = "none";
+  document.getElementById("modal-dica").style.display = "none";
 }
 
 const bancoFacil = [
@@ -84,21 +84,21 @@ const bancoFacil = [
     img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088533/1_tbpkoe.png",
   },
   {
-    q:"Todo código escrito em Portugol deve estar contido dentro de um bloco principal que define o início e o fim do código. Qual é o nome da estrutura obrigatória que 'abraça' todo o seu algoritmo?", 
+    q: "Todo código escrito em Portugol deve estar contido dentro de um bloco principal que define o início e o fim do código. Qual é o nome da estrutura obrigatória que 'abraça' todo o seu algoritmo?",
     a: ["leia()", "escreva()", "programa", "cadeia"],
     c: "programa",
     d: "É o bloco principal que engloba todo o código do programa.",
     // img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088533/1_tbpkoe.png",
   },
   {
-    q:"Você chegou ao fim de uma função no Portugol Studio. Qual símbolo fecha e encerra esse bloco de código?",
+    q: "Você chegou ao fim de uma função no Portugol Studio. Qual símbolo fecha e encerra esse bloco de código?",
     a: ["}", ")", ">", "]"],
     c: "}",
     d: "É o símbolo que fecha o bloco de código da função.",
     // img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088533/1_tbpkoe.png",
   },
   {
-    q:"A tela do console ficou cheia de informações. Qual será o efeito do comando limpa() no Portugol Studio?",
+    q: "A tela do console ficou cheia de informações. Qual será o efeito do comando limpa() no Portugol Studio?",
     a: ["O computador será desligado.", "O programa será excluído.", "Todas as mensagens exibidas anteriormente sumirão.", "As variáveis voltarão a valer zero."],
     c: "Todas as mensagens exibidas anteriormente sumirão.",
     d: "Pense no que acontece quando apagamos tudo que está escrito em um quadro para começar novamente.",
@@ -123,7 +123,7 @@ const bancoFacil = [
   },
   {
     q: "No Portugol, utilizamos um símbolo de atribuição para guardar um valor dentro de uma variável. Qual símbolo é usado para fazer uma variável receber um valor?",
-    a: ["==", "=!", "<-", "+"],
+    a: ["==", "!=", "<-", "+"],
     c: "<-",
     d: "É uma seta que indica o valor 'entrando' na variável.",
     img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088535/4_z2xq0w.png",
@@ -143,11 +143,11 @@ const bancoFacil = [
   //   img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088535/6_gxdves.png",
   // },
   {
-    q: "No Portugol, o operador '%' é utilizado para calcular o resto de uma divisão inteira. Qual será o resultado da expressão 10 % 3?",
-    a: ["3", "1", "0", "10"],
-    c: "1",
-    d: "Divida 10 por 3; o que sobrar dessa conta é a resposta.",
-    img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088536/7_lrlv35.png",
+    q: "No Portugol, o operador '%' é utilizado para calcular o resto de uma divisão inteira. Qual será o resultado da expressão 17 % 5?",
+    a: ["3", "5", "2", "17"],
+    c: "2",
+    d: "Divida 17 por 5; o que sobrar dessa conta é a resposta.",
+    // img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088536/7_lrlv35.png",
   },
   {
     q: "No Portugol, podemos permitir que o usuário digite informações pelo teclado durante a execução do programa. Qual comando é utilizado para ler dados digitados pelo usuário?",
