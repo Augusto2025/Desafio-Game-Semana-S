@@ -1,15 +1,22 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import JsonResponse
 from .models import Ranking
 import json
 import random
 
 def cadastro(request):
-    # Busca todos os nomes cadastrados para evitar duplicidade no front-end
-    # Usamos .values_list para pegar apenas os nomes e facilitar a vida do JS
+    if request.method == 'POST':
+        nome = request.POST.get('nome_usuario')
+        if nome:
+            # Criamos a "chave de acesso" na sessão
+            request.session['usuario_nome'] = nome
+            return JsonResponse({'status': 'sucesso'})
+
+    # Se for um acesso normal (GET), limpamos tudo para começar do zero
+    request.session.flush() 
+    
     nomes_existentes = Ranking.objects.values_list('nome', flat=True)
     
-    # Sempre que entrar no cadastro, geramos um novo código de 5 dígitos
     codigo_secreto = f"{random.randint(0, 99999):05d}"
     request.session['codigo_secreto'] = codigo_secreto
     
@@ -18,12 +25,9 @@ def cadastro(request):
     })
 
 def dificuldade(request):
+    if 'usuario_nome' not in request.session:
+        return redirect('cadastro')
     return render(request, 'dificuldade.html')
-
-def desafio(request):
-    # Pegamos o código que foi gerado no cadastro
-    codigo = request.session.get('codigo_secreto', '00000')
-    return render(request, 'desafio.html', {'codigo_secreto': codigo})
 
 def creditos(request):
     return render(request, 'creditos.html')
@@ -41,9 +45,14 @@ def verificar_cofre(request):
             return JsonResponse({'status': 'erro', 'mensagem': 'Código incorreto!'})
 
 def ranking_view(request):
-    return render(request, 'ranking.html')
+    # Se o usuário não estiver na sessão, passamos uma variável para o template esconder o botão
+    usuario_logado = 'usuario_nome' in request.session
+    return render(request, 'ranking.html', {'usuario_logado': usuario_logado})
 
 def desafio(request):
+    if 'usuario_nome' not in request.session:
+        return redirect('cadastro')
+
     nivel = request.GET.get('nivel')
     codigo = request.session.get('codigo_secreto', '00000')
     
@@ -68,9 +77,13 @@ def salvar_resultado(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         
+        # Assim que salva o primeiro resultado, guardamos o nome na sessão do Django
+        # Isso serve como o nosso "Login"
+        request.session['usuario_nome'] = data['nome']
+        
         Ranking.objects.update_or_create(
             nome=data['nome'],
-            nivel=data.get('nivel', 'facil'), # Crucial: identifica em qual card salvar
+            nivel=data.get('nivel', 'facil'),
             defaults={
                 'acertos': data['acertos'],
                 'tempo_ms': data['tempo'],
