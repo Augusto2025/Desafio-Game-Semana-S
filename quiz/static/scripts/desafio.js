@@ -166,13 +166,13 @@ const bancoFacil = [
     d: "É o símbolo que fecha o bloco de código da função.",
     img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778703482/1_zziey2.png",
   },
-  // {
-  //   q: "A tela do console ficou cheia de informações. Qual será o efeito do comando limpa() no Portugol Studio?",
-  //   a: ["O computador será desligado.", "O programa será excluído.", "Todas as mensagens exibidas anteriormente sumirão.", "As variáveis voltarão a valer zero."],
-  //   c: "Todas as mensagens exibidas anteriormente sumirão.",
-  //   d: "Pense no que acontece quando apagamos tudo que está escrito em um quadro para começar novamente.",
-  //   img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088533/1_tbpkoe.png",
-  // },
+  {
+    q: "A tela do console ficou cheia de informações. Qual será o efeito do comando limpa() no Portugol Studio?",
+    a: ["O computador será desligado.", "O programa será excluído.", "Todas as mensagens exibidas anteriormente sumirão.", "As variáveis voltarão a valer zero."],
+    c: "Todas as mensagens exibidas anteriormente sumirão.",
+    d: "Pense no que acontece quando apagamos tudo que está escrito em um quadro para começar novamente.",
+    img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778704193/4limpar_xpseqi.png",
+  },
 
 
 
