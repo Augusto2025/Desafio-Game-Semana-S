@@ -10,7 +10,7 @@ urlpatterns = [
     path('api/ranking/', views.api_ranking, name='api_ranking'),
     path('salvar-resultado/', views.salvar_resultado, name='salvar_resultado'),
     path('dificuldade/', views.dificuldade, name='dificuldade'),
-    path('desbloquear-cofre/', views.desbloquear_cofre, name='desbloquear_cofre'),
+    path('cofre/', views.desbloquear_cofre, name='desbloquear_cofre'),
     path('premio/', views.api_premio, name='premio'),
     path('creditos/', views.creditos, name='creditos'),
 ]
