@@ -81,14 +81,14 @@ const bancoFacil = [
     a: ["leia()", "escreva()", "programa", "inicio"],
     c: "escreva()",
     d: "Pense no ato de registrar algo em um papel para que outros vejam.",
-    img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088533/1_tbpkoe.png",
+    img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778694620/Gemini_Generated_Image_swglleswglleswgl_kaafo7.png",
   },
   {
     q: "Todo código escrito em Portugol deve estar contido dentro de um bloco principal que define o início e o fim do código. Qual é o nome da estrutura obrigatória que 'abraça' todo o seu algoritmo?",
     a: ["leia()", "escreva()", "programa", "cadeia"],
     c: "programa",
     d: "É o bloco principal que engloba todo o código do programa.",
-    // img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088533/1_tbpkoe.png",
+    img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778694620/Gemini_Generated_Image_swglleswglleswgl_kaafo7.png",
   },
   {
     q: "Você chegou ao fim de uma função no Portugol Studio. Qual símbolo fecha e encerra esse bloco de código?",
@@ -116,14 +116,14 @@ const bancoFacil = [
   },
   {
     q: "No Portugol, os comentários são usados para adicionar explicações no código sem interferir na execução do programa. Qual símbolo é utilizado para iniciar um comentário de apenas uma linha?",
-    a: ["//", "/*", "#", "--"],
+    a: ["//", "/*", "#", "///"],
     c: "//",
     d: "São dois sinais de divisão inclinados para a direita.",
     img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088533/3_jxnfdp.png",
   },
   {
     q: "No Portugol, utilizamos um símbolo de atribuição para guardar um valor dentro de uma variável. Qual símbolo é usado para fazer uma variável receber um valor?",
-    a: ["==", "!=", "<-", "+"],
+    a: ["==", "!=", "<-", "=>"],
     c: "<-",
     d: "É uma seta que indica o valor 'entrando' na variável.",
     img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088535/4_z2xq0w.png",
@@ -143,10 +143,10 @@ const bancoFacil = [
   //   img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088535/6_gxdves.png",
   // },
   {
-    q: "No Portugol, o operador '%' é utilizado para calcular o resto de uma divisão inteira. Qual será o resultado da expressão 17 % 5?",
-    a: ["3", "5", "2", "17"],
+    q: "No Portugol, o operador '%' é utilizado para calcular o resto de uma divisão inteira. Qual será o resultado da expressão 10 % 4?",
+    a: ["3", "5", "2", "1"],
     c: "2",
-    d: "Divida 17 por 5; o que sobrar dessa conta é a resposta.",
+    d: "Divida 10 por 4; o que sobrar dessa conta é a resposta.",
     // img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778088536/7_lrlv35.png",
   },
   {
