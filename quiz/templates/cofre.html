@@ -70,58 +70,79 @@
         let tentativasRestantes = 5;
         let podeSair = false; 
 
-        // --- FUNÇÃO DE PUNIÇÃO (AUTODESTRUIÇÃO) ---
-        function travarSistema(motivo) {
-            if (podeSair) return;
-            podeSair = true;
-            
-            // Esconde tudo e bloqueia
-            document.body.style.display = "none"; 
-            
-            // O replace impede que ele consiga "voltar" para o cofre depois
-            window.location.replace("{% url 'ranking' %}");
-            
-            alert("⚠️ VIOLAÇÃO DE SEGURANÇA: " + motivo + "\nSessão encerrada.");
-        }
+// --- FUNÇÃO DE PUNIÇÃO (AUTODESTRUIÇÃO) ---
+function travarSistema(motivo) {
+    if (podeSair) return;
+    podeSair = true;
+    
+    // Esconde tudo e bloqueia visualmente
+    document.body.style.display = "none"; 
+    
+    // Tenta pegar a URL do objeto global que definimos, ou usa o padrão
+    const urlRanking = (window.CONFIG_JOGO && window.CONFIG_JOGO.urlRanking) ? window.CONFIG_JOGO.urlRanking : "/ranking/";
+    
+    alert("⚠️ VIOLAÇÃO DE SEGURANÇA: " + motivo + "\nSessão encerrada.");
+    window.location.replace(urlRanking);
+}
 
-        // --- BLOQUEIOS DE TECLADO E NAVEGAÇÃO ---
-        // 1. Bloqueia o botão 'Voltar' do navegador (físico ou do mouse)
-        // Criamos um loop no histórico. Se ele tentar voltar, ele cai no mesmo lugar e dispara o erro.
+// --- LÓGICA DE RASTREIO DE RECARREGAMENTO (A que funcionou) ---
+window.addEventListener('pagehide', function() {
+    if (!podeSair) {
+        const usuario = localStorage.getItem("usuarioAtual") || "anonimo";
+        localStorage.setItem(`tentou_recarregar_${usuario}`, "true");
+    }
+});
+
+window.addEventListener('load', function() {
+    const usuario = localStorage.getItem("usuarioAtual") || "anonimo";
+    if (localStorage.getItem(`tentou_recarregar_${usuario}`) === "true") {
+        localStorage.removeItem(`tentou_recarregar_${usuario}`);
+        // Se ele carregou a página e a marca estava lá, punimos direto
+        travarSistema("Recarregamento de página detectado via histórico.");
+    }
+});
+
+// --- BLOQUEIOS DE NAVEGAÇÃO E TECLADO ---
+
+// 1. Bloqueia o botão 'Voltar'
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+    if (!podeSair) {
         history.pushState(null, null, location.href);
-        window.onpopstate = function () {
-            history.pushState(null, null, location.href);
-            travarSistema("Botão voltar detectado!");
-        };
+        travarSistema("Botão voltar detectado!");
+    }
+};
 
-        // 2. O evento que detecta quando a página está sendo descarregada (Refresh/Fechar aba)
-        window.onbeforeunload = function (e) {
-            if (!podeSair) {
-                // A maioria dos navegadores modernos mostrará uma caixa de diálogo padrão
-                // Se o usuário insistir em recarregar, a sessão do servidor deve tratar o reset
-                const mensagem = "Se sair, o cofre será bloqueado!";
-                e.returnValue = mensagem;
-                return mensagem;
-            }
-        };
+// 2. Evento de descarregamento (Confirmação do Navegador)
+window.onbeforeunload = function (e) {
+    if (!podeSair) {
+        const mensagem = "Se sair, o cofre será bloqueado!";
+        e.returnValue = mensagem;
+        return mensagem;
+    }
+};
 
-        // 3. Bloqueia atalhos de teclado (F5, Ctrl+R, etc)
-        window.addEventListener('keydown', function (e) {
-            if (
-                e.key === 'F5' || 
-                (e.ctrlKey && (e.key === 'r' || e.key === 'R')) ||
-                e.key === 'F12' ||
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i'))
-            ) {
-                e.preventDefault();
-                travarSistema("Atalho de recarregar/inspecionar!");
-            }
-        });
+// 3. Bloqueia atalhos de teclado (F5, Ctrl+R, F12, Inspecionar)
+window.addEventListener('keydown', function (e) {
+    if (podeSair) return;
 
-        // 4. Bloqueia o botão direito
-        window.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            travarSistema("Menu de contexto bloqueado!");
-        });
+    const isF5 = e.key === 'F5' || e.keyCode === 116;
+    const isCtrlR = (e.ctrlKey || e.metaKey) && (e.key === 'r' || e.key === 'R');
+    const isDevTools = e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i'));
+
+    if (isF5 || isCtrlR || isDevTools) {
+        e.preventDefault();
+        travarSistema("Atalho de recarregar/inspecionar!");
+    }
+}, true);
+
+// 4. Bloqueia o botão direito
+window.addEventListener('contextmenu', (e) => {
+    if (!podeSair) {
+        e.preventDefault();
+        travarSistema("Menu de contexto bloqueado!");
+    }
+}, true);
 
         // --- LÓGICA ORIGINAL DO COFRE ---
 

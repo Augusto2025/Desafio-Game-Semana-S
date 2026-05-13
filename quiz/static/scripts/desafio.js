@@ -1,3 +1,72 @@
+// --- BLOQUEIO TOTAL E BLINDADO ---
+(function() {
+    // 1. Bloqueia Teclado (F5, Ctrl+R, F12, Ctrl+Shift+I)
+    // O uso de 'true' no final garante que seu código capture o evento antes de todos
+    window.addEventListener('keydown', function(e) {
+        if (podeSair) return;
+
+        const isF5 = e.key === 'F5' || e.keyCode === 116;
+        const isCtrlR = (e.ctrlKey || e.metaKey) && (e.key === 'r' || e.keyCode === 82);
+        const isDevTools = e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.keyCode === 73));
+
+        if (isF5 || isCtrlR || isDevTools) {
+            e.preventDefault();
+            e.stopPropagation(); // Impede que o navegador receba o comando
+            travarSistema("Tentativa de recarregar ou inspecionar!");
+            return false;
+        }
+    }, true); 
+
+    // 2. Bloqueio de Botão Direito
+    document.addEventListener('contextmenu', function(e) {
+        if (!podeSair) {
+            e.preventDefault();
+            travarSistema("Botão direito bloqueado!");
+        }
+    }, true);
+
+    // 3. A "Rede de Segurança" (Aviso de saída)
+    // Se o usuário clicar no botão 'recarregar' do navegador com o mouse,
+    // este evento é o único que pode parar a ação.
+    window.addEventListener('beforeunload', function(e) {
+        if (!podeSair) {
+            // A mensagem personalizada foi removida pelos navegadores modernos por segurança,
+            // mas o comando abaixo ativa o diálogo padrão do sistema.
+            e.preventDefault();
+            e.returnValue = ''; 
+        }
+    });
+
+    // 4. Bloqueio do Botão Voltar
+    history.pushState(null, null, location.href);
+    window.onpopstate = function() {
+        if (!podeSair) {
+            history.pushState(null, null, location.href);
+            travarSistema("Botão voltar!");
+        }
+    };
+})();
+
+// Captura o momento em que a página começa a "ir embora"
+window.addEventListener('pagehide', function() {
+    if (!podeSair) {
+        // Como a página está sumindo, tentamos marcar no localStorage
+        // que este usuário tentou burlar o sistema
+        const usuario = localStorage.getItem("usuarioAtual") || "anonimo";
+        localStorage.setItem(`tentou_recarregar_${usuario}`, "true");
+    }
+});
+
+// Quando ele voltar para a página, verificamos se ele veio de um recarregamento proibido
+window.addEventListener('load', function() {
+    const usuario = localStorage.getItem("usuarioAtual") || "anonimo";
+    if (localStorage.getItem(`tentou_recarregar_${usuario}`) === "true") {
+        localStorage.removeItem(`tentou_recarregar_${usuario}`);
+        alert("⚠️ Você tentou recarregar a página! Isso não é permitido.");
+        window.location.replace(window.CONFIG_JOGO.urlRanking);
+    }
+});
+
 // --- SISTEMA DE AJUDAS (Uso único) ---
 let ajudasUsadas = {
   pular: false,
