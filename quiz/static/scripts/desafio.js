@@ -188,7 +188,7 @@ const bancoFacil = [
     a: ["//", "/*", "#", "///"],
     c: "//",
     d: "São dois sinais de divisão inclinados para a direita.",
-    img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778703483/3_ftp5jj.png",
+    img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778704678/3_xclne8.png",
   },
   {
     q: "No Portugol, utilizamos um símbolo de atribuição para guardar um valor dentro de uma variável. Qual símbolo é usado para fazer uma variável receber um valor?",
