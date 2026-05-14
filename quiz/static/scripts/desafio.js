@@ -379,7 +379,7 @@ const bancoDificil = [
   {
     q: "O que faz a função 'txt.extrair_subtexto(c, 0, 1)'?",
     a: ["Apaga o texto", "Pega a primeira letra", "Inverte o texto", "Pega a última letra"],
-    c: "Pega a primeira letra.",
+    c: "Pega a primeira letra",
     d: "Ela começa na posição 0 e termina antes da posição 1.",
     img: "https://res.cloudinary.com/dw0pxfap3/image/upload/v1778774991/10_v4pa7s.png",
   },
