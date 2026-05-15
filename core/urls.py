@@ -13,4 +13,5 @@ urlpatterns = [
     path('cofre/', views.desbloquear_cofre, name='desbloquear_cofre'),
     path('premio/', views.api_premio, name='premio'),
     path('creditos/', views.creditos, name='creditos'),
+    path('reset-ranking/', views.reset_ranking, name='reset_ranking'),
 ]

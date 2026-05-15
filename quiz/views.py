@@ -134,3 +134,11 @@ def desbloquear_cofre(request):
 
 def api_premio(request):
     return render(request, 'premio.html')
+
+def reset_ranking(request):
+    if request.method == "POST":
+        Ranking.objects.all().delete()
+        return JsonResponse({'status': 'success', 'message': 'Ranking resetado!'})
+    
+    # Adicione isso para que ao entrar na página o HTML apareça
+    return render(request, 'reset.html')
